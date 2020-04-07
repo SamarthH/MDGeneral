@@ -1,9 +1,16 @@
-struct input_params
+typedef struct system_state
+{
+	double** position; //Needs to be allocated to have n_particles X n_dimensions size
+	double** orientation; //Needs to be allocated to have n_particles X n_dimensions size
+	double** velocity; //Needs to be allocated to have n_particles X n_dimensions size
+}system_state;
+
+typedef struct input_params
 {
 	int n_dimensions;
 	int n_paticles;
 	double timestep;
 	double runtime;
 	int parallelize; // If 0, parallelize. Else, do not parallelize.
-	void (*)
-};
+	void (*thermostat)(struct input_params*, struct system_state*)
+}input_params;
