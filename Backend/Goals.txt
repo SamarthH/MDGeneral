@@ -1,0 +1,28 @@
+So. here are some ways we get get this thing off the ground:
+
+First thing:
+    -Create a module to initiate all the variables(obivously based on inputs of the user)
+    -Create a module to compute the forces as a function of positions and velocities.
+    -Create a module to integrate. I suggest usage of the verlet's algorithm. It works well, and its quite similar to RK. It also works surprisingly well for a simulations~ 1 ns.
+        Timesteps will be of the order of femtoseconds.
+    -Create a module to sample. I'm not quite sure about this yet.
+
+Primarty Goal:
+    We first simulate an ideal gas, with periodic boundaries and randomly initiated velocities and no forces. The particles will just pass through each other,
+    and are just point particles. We check if this follows maxwellian statistics(obviously). 
+    Something we can try: Then we try to verify the ideal gas equation in terms of intrinsic variables i.e:
+    P=\rho R T. So, we must write algorithm to calculate densities
+
+    We must also scale down units and create a natural scaling for temperatures. Thatll be useful when we include interactions.
+
+    We can then add hard sphere interactions with a cutoff radius.
+
+    If this works, add an LJ interaction and see what happens.
+
+    Then, we make some optimisations and assumptions for optimization. We will get there once the above has been implemented.
+
+    For now the only thing we can do is set a temperature and seeing what happens. any other thing such as simulations in an ensemble will take time. 
+
+
+
+
