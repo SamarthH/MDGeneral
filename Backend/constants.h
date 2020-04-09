@@ -12,6 +12,6 @@
 #define N_A 602214076000000000000000
 #endif
 
-#ifndef BOLTZ_SI
+#ifndef BOLTZ_SI //Boltzmann's constant in SI
 #define BOLTZ_SI 0.000000000000000000000013806485
 #endif
