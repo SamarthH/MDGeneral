@@ -1,10 +1,10 @@
 //In this file, we define the constants of nature
 
-#ifndef PLANK_SI //Plank's constant in SI units
+#ifndef PLANK_SI //Planck's constant in SI units
 #define PLANK_SI 0.000000000000000000000000000000000662607004
 #endif
 
-#ifndef PLANK_EV //Plank's constant in electron volt
+#ifndef PLANK_EV //Planck's constant in electron volt
 #define PLANK_EV 0.0000000000000041357
 #endif
 
@@ -12,3 +12,6 @@
 #define N_A 602214076000000000000000
 #endif
 
+#ifndef BOLTZ_SI
+#define BOLTZ_SI 0.000000000000000000000013806485
+#endif
