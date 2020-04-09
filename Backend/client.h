@@ -1,11 +1,11 @@
-typedef struct system_state
+class system_state
 {
 	double*** position; //Needs to be allocated to have n_types X n_particles X n_dimensions size
 	double*** orientation; //Needs to be allocated to have n_types X n_particles X n_dimensions size
 	double*** velocity; //Needs to be allocated to have n_types X n_particles X n_dimensions size
-}system_state;
+};
 
-typedef struct input_params
+class input_params
 {
 	int n_types; //This represents the number of types of particles
 	int n_dimensions;
@@ -13,5 +13,8 @@ typedef struct input_params
 	double timestep;
 	double runtime;
 	int parallelize; // If 0, parallelize. Else, do not parallelize.
-	void (*thermostat[n_types])(struct input_params*, struct system_state*)
-}input_params;
+	double mass[n_types]; //This represents the mass of each type of particle
+	void (*thermostat[n_types])(input_params*, system_state*); //This stores thermostats for different particle sets
+	void (*interaction[n_types][n_types])(double*, system_state*);
+};
+
