@@ -4,6 +4,7 @@ public:
 	double*** position; //Needs to be allocated to have n_types X n_particles X n_dimensions size
 	double*** orientation; //Needs to be allocated to have n_types X n_particles X n_dimensions size
 	double*** velocity; //Needs to be allocated to have n_types X n_particles X n_dimensions sizes
+	
 };
 
 class input_params
