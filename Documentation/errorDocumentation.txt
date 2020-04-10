@@ -1,0 +1,2 @@
+Error No.	Error Meaning
+0001		Not enough Memory
