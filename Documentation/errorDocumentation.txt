@@ -1,2 +1,2 @@
-Error No.	Error Meaning
-0001		Not enough Memory
+Error No.	Error Meaning							Possible Solutions
+0001		Not enough heap Memory					Try to decrease the number of particles or try on a machine with higher ram
