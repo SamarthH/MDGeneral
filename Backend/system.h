@@ -32,12 +32,14 @@ class simulation : public system_state, public input_params
 public:
 	void (**thermostat)(input_params*, system_state*); //This stores thermostats for different particle sets
 	void (**interaction)(double*, system_state*); //This defines the set of functions for interaction between different particle types. Also allows for non-symmetric interaction.
-	double box_size_limits[n_dimensions]; // We assume that the initial limits are all (0,0,0,...,0) to whatever the limits define for a box.
+	double* box_size_limits; // We assume that the initial limits are all (0,0,0,...,0) to whatever the limits define for a box (allocate to n_dimensions size)
+	
 	simulation(int types, int dimensions, int n_par[types], double m[types], int parallel, int periodic, double time, double run){
 		n_types = types;
 		n_dimensions = dimensions;
 		//Allocating and defining n_particles
 		n_particles = new int[n_types];
+		if(!n_particles){std::cerr<<"Not enough memory"<<endl; exit(0001);}
 		for (int i = 0; i < n_ty; ++i)
 		{
 			n_particles[i] = n_par[i];
@@ -45,11 +47,20 @@ public:
 		//Done
 		//Allocating and defining mass
 		mass = new int[n_types];
+		if(!mass){std::cerr<<"Not enough memory"<<endl; exit(0001);}
+		for (int i = 0; i < n_types; ++i)
+		{
+			mass[i] = m[i];
+		}
 		//Done
+		//Allocating and defining box_size_limits
+		box_size_limits = new int[n_dimensions];
+		if(!box_size_limits){std::cerr<<"Not enough memory"<<endl; exit(0001);}
 		for (int i = 0; i < n_dimensions; ++i)
 		{
 			box_size_limits[i] = size[i];
 		}
+		//Done
 	};
 	~simulation();
 	
