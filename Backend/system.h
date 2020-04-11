@@ -39,15 +39,15 @@ public:
 		n_dimensions = dimensions;
 		//Allocating and defining n_particles
 		n_particles = new int[n_types];
-		if(!n_particles){std::cerr<<"Error 0001"<<endl; exit(0001);}
-		for (int i = 0; i < n_ty; ++i)
+		if(!n_particles){std::cerr<<"Error 0001"<<std::endl; exit(0001);}
+		for (int i = 0; i < n_types; ++i)
 		{
 			n_particles[i] = n_par[i];
 		}
 		//Done
 		//Allocating and defining mass
 		mass = new int[n_types];
-		if(!mass){std::cerr<<"Error 0001"<<endl; exit(0001);}
+		if(!mass){std::cerr<<"Error 0001"<<std::endl; exit(0001);}
 		for (int i = 0; i < n_types; ++i)
 		{
 			mass[i] = m[i];
@@ -55,7 +55,7 @@ public:
 		//Done
 		//Allocating and defining box_size_limits
 		box_size_limits = new int[n_dimensions];
-		if(!box_size_limits){std::cerr<<"Error 0001"<<endl; exit(0001);}
+		if(!box_size_limits){std::cerr<<"Error 0001"<<std::endl; exit(0001);}
 		for (int i = 0; i < n_dimensions; ++i)
 		{
 			box_size_limits[i] = size[i];
@@ -65,19 +65,19 @@ public:
 		position = new double**[n_types];
 		velocity = new double**[n_types];
 		orientation = new double**[n_types];
-		if(!position || !velocity || !orientation){std::cerr<<"Error 0001"<<endl; exit(0001);}
+		if(!position || !velocity || !orientation){std::cerr<<"Error 0001"<<std::endl; exit(0001);}
 		for (int i = 0; i < n_types; ++i)
 		{
 			position[i] = new double*[n_particles[i]];
 			velocity[i] = new double*[n_particles[i]];
 			orientation[i] = new double*[n_particles[i]];
-			if(!position[i] || !velocity[i] || !orientation[i]){std::cerr<<"Error 0001"<<endl; exit(0001);}
+			if(!position[i] || !velocity[i] || !orientation[i]){std::cerr<<"Error 0001"<<std::endl; exit(0001);}
 			for (int j = 0; j < n_particles[i]; ++j)
 			{
 				position[i][j] = new double*[n_dimensions];
 				velocity[i][j] = new double*[n_dimensions];
 				orientation[i][j] = new double*[n_dimensions];
-				if(!position[i][j] || !velocity[i][j] || !orientation[i][j]){std::cerr<<"Error 0001"<<endl; exit(0001);}
+				if(!position[i][j] || !velocity[i][j] || !orientation[i][j]){std::cerr<<"Error 0001"<<std::endl; exit(0001);}
 			}
 		}
 
