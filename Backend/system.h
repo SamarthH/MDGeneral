@@ -1,8 +1,9 @@
 #ifndef SYSTEM_H
 #define SYSTEM_H 
 
-#include <stdio.h>
-#include <stdlib.h>
+//#include <stdio.h>
+#include <iostream>
+//#include <stdlib.h>
 #include <omp.h>
 
 class system_state
@@ -12,6 +13,9 @@ public:
 	double*** orientation; //Needs to be allocated to have n_types X n_particles X n_dimensions size
 	double*** velocity; //Needs to be allocated to have n_types X n_particles X n_dimensions sizes
 	double* temperature; // This defines the temperatures of the n_types particle sets
+	
+	system_state(){
+	}
 };
 
 class input_params
@@ -25,6 +29,9 @@ public:
 	extern int parallelize; // If 1, parallelize. Else, do not parallelize.
 	double* mass; //This represents the mass of each type of particle (to be allocated to an n_types sized array)
 	int periodic_boundary; //Use periodic boundary conditions if 1. If 0, use rigid walls.
+	
+	input_params(string input){
+	}
 };
 
 class simulation : public system_state, public input_params
