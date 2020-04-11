@@ -12,8 +12,12 @@ public:
 	double*** position; //Needs to be allocated to have n_types X n_particles X n_dimensions size
 	double*** orientation; //Needs to be allocated to have n_types X n_particles X n_dimensions size
 	double*** velocity; //Needs to be allocated to have n_types X n_particles X n_dimensions sizes
+	double*** acceleration; //Needs to be allocated to have n_types X n_particles X n_dimensions sizes
 	double* temperature; // This defines the temperatures of the n_types particle sets
-	
+	double energy_total; //Defines the total energy at this instant
+	double energy_potential; //Defines the total potential energy of interaction at this instant
+	double* energy_kinetic; //Defines the kinetic energy of each particle type
+	double time;
 	system_state(){
 	}
 };
@@ -72,22 +76,38 @@ public:
 		position = new double**[n_types];
 		velocity = new double**[n_types];
 		orientation = new double**[n_types];
+		acceleration = new double**[n_types];
 		if(!position || !velocity || !orientation){std::cerr<<"Error 0001"<<std::endl; exit(0001);}
 		for (int i = 0; i < n_types; ++i)
 		{
 			position[i] = new double*[n_particles[i]];
 			velocity[i] = new double*[n_particles[i]];
 			orientation[i] = new double*[n_particles[i]];
-			if(!position[i] || !velocity[i] || !orientation[i]){std::cerr<<"Error 0001"<<std::endl; exit(0001);}
+			acceleration[i] = new double*[n_particles[i]];
+			if(!position[i] || !velocity[i] || !orientation[i] || !acceleration[i]){std::cerr<<"Error 0001"<<std::endl; exit(0001);}
 			for (int j = 0; j < n_particles[i]; ++j)
 			{
 				position[i][j] = new double*[n_dimensions];
 				velocity[i][j] = new double*[n_dimensions];
 				orientation[i][j] = new double*[n_dimensions];
-				if(!position[i][j] || !velocity[i][j] || !orientation[i][j]){std::cerr<<"Error 0001"<<std::endl; exit(0001);}
+				acceleration[i][j] = new double*[n_dimensions];
+				if(!position[i][j] || !velocity[i][j] || !orientation[i][j] || !acceleration[i][j]){std::cerr<<"Error 0001"<<std::endl; exit(0001);}
 			}
 		}
 
+		//Done
+
+		//Allocating and initializing temperature, energy_kinetic
+
+		temperature = new double[n_types];
+		energy_kinetic = new double[n_types];
+
+		if(!temperature || !energy_kinetic){std::cerr<<"Error 0001"<<std::endl; exit(0001);}
+
+		for (int i = 0; i < n_types; ++i)
+		{
+			temperature[i] = energy_kinetic[i] = 0;
+		}
 		//Done
 	};
 	~simulation();
