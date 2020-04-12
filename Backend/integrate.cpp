@@ -42,11 +42,15 @@ void integrate_verdet_box(simulation* sim){
 				sim.position[i][j][k] += dt*sim.velocity[i][j][k] + 0.5*dt*dt*sim.acceleration[i][j][k];
 				sim.velocity[i][j][k] += dt*sim.acceleration[i][j][k];
 				if(sim.position[i][j][k]<0 || sim.position[i][j][k] > sim.box_size_limits[k]){
-					sim.velocity[i][j][k] *= -1;
 					int num_bounce = (int)(sim.position[i][j][k]/sim.box_size_limits[k]);
 					double l = std::abs(sim.position[i][j][k] - box_size_limits[k]*num_bounce);
+					//Getting rid of the signs
 					num_bounce *= ((num_bounce < 0)*-1 + (num_bounce>0));
+					//Done
+					//Implementing reflection
 					sim.position[i][j][k] = (num_bounce%2 == 0)*l + (num_bounce%2 == 1)*(box_size_limits[k]-l);
+					sim.velocity[i][j][k] *= ((num_bounce%2==0) + (num_bounce%2 == 1)*(-1));
+					//Done
 				}
 				#pragma omp atomic
 				{
