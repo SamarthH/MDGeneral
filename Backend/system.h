@@ -114,4 +114,13 @@ public:
 	
 };
 
+class constants_lj //Only need to call such a class if the interaction to be used is Lennard Jones (LJ) potential. Also, remember that 2.5*\sigma < min(box_size_limits)
+{
+
+public:
+	constants_lj();
+	~constants_lj();
+	
+};
+
 #endif
