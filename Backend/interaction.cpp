@@ -27,7 +27,7 @@ double distance(simulation* sim, int type1, int n1, int type2, int n2)
 	}
 }
 
-void free_particles_periodic(simulation* sim)
+void free_particles(simulation* sim)
 {
 	sim.energy_potential = 0;
 	for (int i = 0; i < sim.n_types; ++i)
@@ -44,19 +44,6 @@ void free_particles_periodic(simulation* sim)
 	}
 }
 
-void free_particles_box(simulation* sim)
-{
-	sim.energy_potential = 0;;
-	for (int i = 0; i < sim.n_types; ++i)
-	{
-		#pragma omp target teams distribute for
-		for (int j = 0; j < sim.n_particles[i]; ++j)
-		{
-			#pragma omp parallel for
-			for (int k = 0; k < n_dimensions; ++k)
-			{
-				sim.acceleration[i][j][k] == 0;
-			}
-		}
-	}
+void lj_periodic(simulation* sim){
+	
 }
