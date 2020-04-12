@@ -25,6 +25,7 @@ void integrate_verdet_periodic(simulation* sim){
 		sim.temperature[i] = sim.energy_kinetic[i]/(sim.n_dimensions*sim.n_particles*BOLTZ_SI);
 		sim.energy_total += sim.energy_kinetic[i];
 	}
+	sim.time+= dt;
 }
 
 void integrate_verdet_box(simulation* sim){
@@ -62,4 +63,5 @@ void integrate_verdet_box(simulation* sim){
 		sim.temperature[i] = sim.energy_kinetic[i]/(sim.n_dimensions*sim.n_particles*BOLTZ_SI);
 		sim.energy_total += sim.energy_kinetic[i];
 	}
+	sim.time+=dt;
 }
