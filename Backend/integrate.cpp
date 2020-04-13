@@ -1,7 +1,7 @@
 #include "integrate.h"
 
 void integrate_verdet_periodic(simulation* sim){
-	dt = sim.timestep;
+	double dt = sim.timestep;
 	sim.energy_total = sim.energy_potential;
 	for (int i = 0; i < sim.n_types; ++i)
 	{
@@ -29,7 +29,7 @@ void integrate_verdet_periodic(simulation* sim){
 }
 
 void integrate_verdet_box(simulation* sim){
-	dt = sim.timestep;
+	double dt = sim.timestep;
 	sim.energy_total = sim.energy_potential;
 	for (int i = 0; i < sim.n_types; ++i)
 	{
