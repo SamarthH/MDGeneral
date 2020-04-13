@@ -32,6 +32,7 @@ public:
 	double runtime;
 	extern int parallelize; // If 1, parallelize. Else, do not parallelize.
 	double* mass; //This represents the mass of each type of particle (to be allocated to an n_types sized array)
+	double* temperature_required; //This is the array of temperature required to be mainted for each particle type by the thermostat.
 	int periodic_boundary; //Use periodic boundary conditions if 1. If 0, use rigid walls.
 	
 	input_params(string input){
@@ -41,8 +42,8 @@ public:
 class simulation : public system_state, public input_params
 {
 public:
-	void (**thermostat)(input_params*, system_state*); //This stores thermostats for different particle sets
-	void (**interaction)(double*, system_state*); //This defines the set of functions for interaction between different particle types. Also allows for non-symmetric interaction.
+	void (**thermostat)(simulation*); //This stores thermostats for different particle sets
+	void (***interaction)(simulation*,int,int); //This defines the set of functions for interaction between different particle types. Also allows for non-symmetric interaction.
 	double* box_size_limits; // We assume that the initial limits are all (0,0,0,...,0) to whatever the limits define for a box (allocate to n_dimensions size)
 
 	simulation(int types, int dimensions, int n_par[types], double m[types], int parallel, int periodic, double time, double run){
