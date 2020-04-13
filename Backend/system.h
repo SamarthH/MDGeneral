@@ -42,7 +42,7 @@ public:
 class simulation : public system_state, public input_params
 {
 public:
-	void (**thermostat)(simulation*); //This stores thermostats for different particle sets
+	void (**thermostat)(simulation*,int); //This stores thermostats for different particle sets
 	void (***interaction)(simulation*,int,int); //This defines the set of functions for interaction between different particle types. Also allows for non-symmetric interaction.
 	double* box_size_limits; // We assume that the initial limits are all (0,0,0,...,0) to whatever the limits define for a box (allocate to n_dimensions size)
 
