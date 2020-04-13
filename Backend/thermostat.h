@@ -9,5 +9,7 @@
 #include <algorithm>
 #include <random>
 
-void anderson(simulation*);
+void call_thermostat(simulation*); //Call this to get thermostat effects
+
+void anderson(simulation*,int);
 #endif
