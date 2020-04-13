@@ -4,8 +4,12 @@ void call_thermostat(simulation* sim){
 	#pragma omp parallel for
 	for (int i = 0; i < n_type; ++i)
 	{
-		anderson(sim,i);
+		thermostat[i](sim,i);
 	}
+}
+
+void no_thermostat(simulation* sim, int type){
+	//Nothing to be done here
 }
 
 void anderson(simulation* sim, int type){

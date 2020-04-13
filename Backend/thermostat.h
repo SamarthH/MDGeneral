@@ -11,5 +11,7 @@
 
 void call_thermostat(simulation*); //Call this to get thermostat effects
 
+void no_thermostat(simulation*, int);
+
 void anderson(simulation*,int);
 #endif
