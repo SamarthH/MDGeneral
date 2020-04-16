@@ -1,2 +1,3 @@
-Error No.	Error Meaning							Possible Solutions
-0001		Not enough heap Memory					Try to decrease the number of particles or try on a machine with higher ram
+Error No.	Error Meaning												Possible Solutions
+0001		Not enough heap Memory										Try to decrease the number of particles or try on a machine with higher ram
+0002		Bad alloc(Mostly caused by lack of memory)					Try to decrease the number of particles or try on a machine with higher ram

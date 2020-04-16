@@ -12,14 +12,14 @@
 class system_state
 {
 public:
-	double*** position; //Needs to be allocated to have n_types X n_particles X n_dimensions size
-	double*** orientation; //Needs to be allocated to have n_types X n_particles X n_dimensions size
-	double*** velocity; //Needs to be allocated to have n_types X n_particles X n_dimensions sizes
-	double*** acceleration; //Needs to be allocated to have n_types X n_particles X n_dimensions sizes
-	double* temperature; // This defines the temperatures of the n_types particle sets
+	std::vector<std::vector<std::vector<double>>> position; //Needs to be allocated to have n_types X n_particles X n_dimensions size
+	std::vector<std::vector<std::vector<double>>> orientation; //Needs to be allocated to have n_types X n_particles X n_dimensions size
+	std::vector<std::vector<std::vector<double>>> velocity; //Needs to be allocated to have n_types X n_particles X n_dimensions sizes
+	std::vector<std::vector<std::vector<double>>> acceleration; //Needs to be allocated to have n_types X n_particles X n_dimensions sizes
+	std::vector<double> temperature; // This defines the temperatures of the n_types particle sets
 	double energy_total; //Defines the total energy at this instant
 	double energy_potential; //Defines the total potential energy of interaction at this instant
-	double* energy_kinetic; //Defines the kinetic energy of each particle type
+	std::vector<double> energy_kinetic; //Defines the kinetic energy of each particle type
 	double time;
 	int state;
 	system_state(){
@@ -78,86 +78,85 @@ public:
 class simulation : public system_state, public input_params
 {
 public:
-	void (**thermostat)(simulation*,int); //This stores thermostats for different particle sets
-	void (***interaction)(simulation*,int,int); //This defines the set of functions for interaction between different particle types. Also allows for non-symmetric interaction.
-	double* box_size_limits; // We assume that the initial limits are all (0,0,0,...,0) to whatever the limits define for a box (allocate to n_dimensions size)
+	std::vector<void (*)(simulation&, int)> thermostat; //This stores thermostats for different particle sets
+	std::vector<std::vector<void (*)(simulation&, int)>> interaction; //This defines the set of functions for interaction between different particle types. Also allows for non-symmetric interaction.
+	std::vector<double> box_size_limits; // We assume that the initial limits are all (0,0,0,...,0) to whatever the limits define for a box (allocate to n_dimensions size)
 
-	simulation(int types, int dimensions, int n_par[types], double m[types], int parallel, int periodic, double time, double run){
-		state=0;
-		n_types = types;
-		n_dimensions = dimensions;
-		//Allocating and defining n_particles
-		n_particles = new int[n_types];
-		if(!n_particles){std::cerr<<"Error 0001"<<std::endl; exit(0001);}
-		for (int i = 0; i < n_types; ++i)
-		{
-			n_particles[i] = n_par[i];
-		}
-		//Done
-		//Allocating and defining mass
-		mass = new int[n_types];
-		if(!mass){std::cerr<<"Error 0001"<<std::endl; exit(0001);}
-		for (int i = 0; i < n_types; ++i)
-		{
-			mass[i] = m[i];
-		}
-		//Done
+	simulation(std::string input){
+
+		//Please check here @Sweptile
+
+		input_params(input);
+
 		//Allocating and defining box_size_limits
-		box_size_limits = new int[n_dimensions];
-		if(!box_size_limits){std::cerr<<"Error 0001"<<std::endl; exit(0001);}
+		try{
+			box_size_limits.reserve(n_dimensions);
+		}
+		catch(const std::length_error& le){
+			std::cerr<<"Error 0001"<<std::endl; 
+			exit(0001);
+		}
 		for (int i = 0; i < n_dimensions; ++i)
 		{
-			box_size_limits[i] = size[i];
+			box_size_limits.push_back(size[i]);
 		}
 		//Done
-		//Allocating space for position, orientation and velocity array (still would need to be randomly innitialized)
-		position = new double**[n_types];
-		velocity = new double**[n_types];
-		orientation = new double**[n_types];
-		acceleration = new double**[n_types];
-		if(!position || !velocity || !orientation){std::cerr<<"Error 0001"<<std::endl; exit(0001);}
-		for (int i = 0; i < n_types; ++i)
-		{
-			position[i] = new double*[n_particles[i]];
-			velocity[i] = new double*[n_particles[i]];
-			orientation[i] = new double*[n_particles[i]];
-			acceleration[i] = new double*[n_particles[i]];
-			if(!position[i] || !velocity[i] || !orientation[i] || !acceleration[i]){std::cerr<<"Error 0001"<<std::endl; exit(0001);}
-			for (int j = 0; j < n_particles[i]; ++j)
+
+		//Allocating (reserving) system_state variables
+		try{
+			temperature.reserve(n_types);
+			energy_kinetic.reserve(n_types);
+			position.reserve(n_types);
+			velocity.reserve(n_types);
+			orientation.reserve(n_types);
+			acceleration.reserve(n_types);
+
+			for (int i = 0; i < n_types; ++i)
 			{
-				position[i][j] = new double*[n_dimensions];
-				velocity[i][j] = new double*[n_dimensions];
-				orientation[i][j] = new double*[n_dimensions];
-				acceleration[i][j] = new double*[n_dimensions];
-				if(!position[i][j] || !velocity[i][j] || !orientation[i][j] || !acceleration[i][j]){std::cerr<<"Error 0001"<<std::endl; exit(0001);}
+				position[i].reserve(n_particles[i]);
+				velocity[i].reserve(n_particles[i]);
+				orientation[i].reserve(n_particles[i]);
+				acceleration[i].reserve(n_particles[i]);
+
+				for (int j = 0; j < n_particles[i]; ++j)
+				{
+					position[i][j].reserve(n_dimensions);
+					velocity[i][j].reserve(n_dimensions);
+					orientation[i][j].reserve(n_dimensions);
+					acceleration[i][j].reserve(n_dimensions);
+				}
 			}
 		}
-
+		catch(const std::length_error& le){
+			std::cerr<<"Error 0001"<<std::endl; 
+			exit(0001);
+		}
+		catch(const std::bad_alloc& ba){
+			std::cerr<<"Error 0002"<<std::endl;
+			exit(0002);
+		}
 		//Done
 
-		//Allocating and initializing temperature, energy_kinetic
-
-		temperature = new double[n_types];
-		energy_kinetic = new double[n_types];
-
-		if(!temperature || !energy_kinetic){std::cerr<<"Error 0001"<<std::endl; exit(0001);}
-
-		for (int i = 0; i < n_types; ++i)
-		{
-			temperature[i] = energy_kinetic[i] = 0;
+		//Allocating functions
+		try{
+			thermostat.reserve(n_types);
+			interaction.reserve(n_types);
+			for (int i = 0; i < n_types; ++i)
+			{
+				interaction[i].reserve(n_types);
+			}
+		}
+		catch(const std::length_error& le){
+			std::cerr<<"Error 0001"<<std::endl; 
+			exit(0001);
+		}
+		catch(const std::bad_alloc& ba){
+			std::cerr<<"Error 0002"<<std::endl;
+			exit(0002);
 		}
 		//Done
 	};
 	~simulation();
-	
-};
-
-class constants_lj //Only need to call such a class if the interaction to be used is Lennard Jones (LJ) potential. Also, remember that 2.5*\sigma < min(box_size_limits)
-{
-
-public:
-	constants_lj();
-	~constants_lj();
 	
 };
 

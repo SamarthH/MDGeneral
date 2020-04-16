@@ -1,6 +1,6 @@
 #include"initialize.h"
 
-void init_sim(simulation* sim)
+void init_sim(simulation& sim)
 {
     double velsum[sim.n_types][sim.n_dimensions];
     double vel2sum[sim.n_types];
@@ -13,7 +13,6 @@ void init_sim(simulation* sim)
     //Randomization Initialized
 
 
-
     for(int i = 0; i < sim.n_types;++i)
     {
         vel2sum[i]=0;
@@ -22,9 +21,10 @@ void init_sim(simulation* sim)
         {
             velsum[i][k]=0;
         }
-        
+        #pragma omp target teams distribute for
         for(int j = 0; j < sim.n_particles[i];++j)
         {
+            #pragma omp parallel for
             for(int k = 0; k < sim.n_dimensions;++k)
             {
                 sim.position[i][j][k] = unif(gen)*sim.box_size_limits[k];
@@ -33,6 +33,7 @@ void init_sim(simulation* sim)
                 vel2sum[i]+=pow(sim.velocity[i][j][k],2);
             }
         }
+        #pragma omp parallel for
         for(int k = 0; k < sim.n_dimensions;++k)
         {
             velsum[i][k]=velsum[i][k]/sim.n_particles[i];
