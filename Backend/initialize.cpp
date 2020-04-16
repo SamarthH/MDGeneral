@@ -6,6 +6,14 @@ void init_sim(simulation* sim)
     double vel2sum[sim.n_types];
     double scale[sim.n_types];
 
+    //Initializing the randomization
+    std:: random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_real_distribution<> unif(0, 1);
+    //Randomization Initialized
+
+
+
     for(int i = 0; i < sim.n_types;++i)
     {
         vel2sum[i]=0;
@@ -19,8 +27,8 @@ void init_sim(simulation* sim)
         {
             for(int k = 0; k < sim.n_dimensions;++k)
             {
-                sim.position[i][j][k] = ((double) rand())/(RAND_MAX))*sim.box_size_limits[k];
-                sim.velocity[i][j][k] = ((((double) rand())/RAND_MAX)-0.5);
+                sim.position[i][j][k] = unif(gen)*sim.box_size_limits[k];
+                sim.velocity[i][j][k] = (unif(gen) - 0.5);
                 velsum[i][k]+=sim.velocity[i][j][k];
                 vel2sum[i]+=pow(sim.velocity[i][j][k],2);
             }
