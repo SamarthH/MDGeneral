@@ -21,6 +21,7 @@ public:
 	double energy_potential; //Defines the total potential energy of interaction at this instant
 	double* energy_kinetic; //Defines the kinetic energy of each particle type
 	double time;
+	int state;
 	system_state(){
 	}
 };
@@ -82,6 +83,7 @@ public:
 	double* box_size_limits; // We assume that the initial limits are all (0,0,0,...,0) to whatever the limits define for a box (allocate to n_dimensions size)
 
 	simulation(int types, int dimensions, int n_par[types], double m[types], int parallel, int periodic, double time, double run){
+		state=0;
 		n_types = types;
 		n_dimensions = dimensions;
 		//Allocating and defining n_particles
