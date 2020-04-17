@@ -6,7 +6,8 @@
 #include "system.h"
 #include "constants.h"
 #include "interaction.h"
+#include "thermostat.h"
 
-void integrate_verdet_periodic(simulation&);
-void integrate_verdet_box(simulation&);
+void integrate_verdet_periodic(System::simulation&);
+void integrate_verdet_box(System::simulation&);
 #endif

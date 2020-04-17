@@ -9,9 +9,9 @@
 #include <algorithm>
 #include <random>
 
-void call_thermostat(simulation*); //Call this to get thermostat effects
+void call_thermostat(System::simulation&); //Call this to get thermostat effects
 
-void no_thermostat(simulation*, int);
+void no_thermostat(System::simulation&, int);
 
-void anderson(simulation*,int);
+void anderson(System::simulation&,int);
 #endif

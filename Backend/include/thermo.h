@@ -5,5 +5,5 @@
 #include"constants.h"
 #include<cmath>
 
-void trans_ke(simulation& sim);
+void trans_ke(System::simulation& sim);
 #endif

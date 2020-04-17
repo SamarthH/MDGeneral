@@ -8,9 +8,8 @@
 #include <string>
 #include <sstream>
 #include <vector>
-#include "thermostat.h"
-#include "interaction.h"
-namespace system{
+
+namespace System{
 	class system_state
 	{
 	public:
@@ -36,7 +35,7 @@ namespace system{
 		std::vector<int> n_particles; //This represents the number of particles of each type (n_types sized)
 		double timestep;
 		double runtime;
-		extern int parallelize; // If 1, parallelize. Else, do not parallelize.
+		int parallelize; // If 1, parallelize. Else, do not parallelize.
 		std::vector<double> mass; //This represents the mass of each type of particle (n_types sized)
 		std::vector<double> temperature_required; //This is the vector of the temperatures required to be mainted for each particle type by the thermostat.
 		int periodic_boundary; //Use periodic boundary conditions if 1. If 0, use rigid walls.
@@ -46,7 +45,7 @@ namespace system{
 			std::stringstream ss(input);
 			
 			while(ss.good()){			//This packages the input string (comma separated) into the input_vector object
-				string temp;
+				std::string temp;
 				std::getline(ss, temp, ',');
 				input_vector.push_back(std::stod(temp));
 			}
@@ -78,10 +77,10 @@ namespace system{
 	{
 	public:
 		std::vector<void (*)(simulation&, int)> thermostat; //This stores thermostats for different particle sets
-		std::vector<std::vector<void (*)(simulation&, int)>> interaction; //This defines the set of functions for interaction between different particle types. Also allows for non-symmetric interaction.
+		std::vector<std::vector<void (*)(simulation&, int, int)>> interaction; //This defines the set of functions for interaction between different particle types. Also allows for non-symmetric interaction.
 		std::vector<double> box_size_limits; // We assume that the initial limits are all (0,0,0,...,0) to whatever the limits define for a box (allocate to n_dimensions size)
 
-		simulation(std::string input):input_params(input_params)
+		simulation(std::string input, double size[]):input_params(input)
 		{
 
 			//Please check here @Sweptile
@@ -156,34 +155,7 @@ namespace system{
 		};
 
 
-		/* Temporary*/
-		/* Temporary*/
-		/* Temporary*/
-		/* Temporary*/
-		/* Temporary*/
-		/* Temporary*/
-		/* Temporary*/
-		/* Temporary*/
-		/* Temporary functions alloted to thermostat and interaction. Please remove when input is possible*/
-		
-		for(int i=0; (i< n_types); i++){
-			thermostat[i] = no_thermostat;
-			for (int j = 0; j < n_types; ++j)
-			{
-				interaction[i][j] = free_particles;
-			}
-		}
 
-		/* Done*/
-		/* Done*/
-		/* Done*/
-		/* Done*/
-		/* Done*/
-		/* Done*/
-		/* Done*/
-		/* Done*/
-		/* Done*/
-		/* Done*/
 		~simulation();
 		
 	};

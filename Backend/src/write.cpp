@@ -1,7 +1,7 @@
 #include"write.h"
 
 // for now this just dumps positions and velocities on the screen on the screen. later we can use it to write onto a file.
-void write_traj(simulation* sim)
+void write_traj(System::simulation& sim)
 {
     for(int i = 0; i < sim.n_types;++i)
     {

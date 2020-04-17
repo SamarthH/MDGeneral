@@ -7,7 +7,7 @@
 #include"system.h"
 #include"constants.h"
 
-void init_sim(simulation& sim);
+void init_sim(System::simulation& sim);
 
 
 
