@@ -43,11 +43,11 @@ public:
 	int periodic_boundary; //Use periodic boundary conditions if 1. If 0, use rigid walls.
 	
 	input_params(std::string input){
-		std:vector<int> input_vector;
+		std::vector<int> input_vector;
 		std::stringstream ss(input);
 		
 		while(ss.good()){			//This packages the input string (comma separated) into the input_vector object
-			string temp;
+			std::string temp;
 			std::getline(ss, temp, ",");
 			input_vector.push_back(std::stod(temp));
 		}
