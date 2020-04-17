@@ -8,6 +8,8 @@
 #include <string>
 #include <sstream>
 #include <vector>
+#include "thermostat.h"
+#include "interaction.h"
 
 class system_state
 {
@@ -31,14 +33,11 @@ class input_params
 public:
 	int n_types; //This represents the number of types of particles
 	int n_dimensions; //This represents the number of dimensions of the simulation (by default must be 3)
-	//int* n_particles; //This represents the number of particles of each type (to be allocated to an n_types sized array)
 	std::vector<int> n_particles; //This represents the number of particles of each type (n_types sized)
 	double timestep;
 	double runtime;
 	extern int parallelize; // If 1, parallelize. Else, do not parallelize.
-	//double* mass; //This represents the mass of each type of particle (to be allocated to an n_types sized array)
 	std::vector<double> mass; //This represents the mass of each type of particle (n_types sized)
-	//double* temperature_required; //This is the array of temperature required to be mainted for each particle type by the thermostat.
 	std::vector<double> temperature_required; //This is the vector of the temperatures required to be mainted for each particle type by the thermostat.
 	int periodic_boundary; //Use periodic boundary conditions if 1. If 0, use rigid walls.
 	
@@ -156,6 +155,38 @@ public:
 		}
 		//Done
 	};
+
+
+	/* Temporary
+	/* Temporary
+	/* Temporary
+	/* Temporary
+	/* Temporary
+	/* Temporary
+	/* Temporary
+	/* Temporary
+	/* Temporary functions alloted to thermostat and interaction. Please remove when input is possible
+	*/
+	
+	for(int i=0; (i< n_types); i++){
+		thermostat[i] = no_thermostat;
+		for (int j = 0; j < n_types; ++j)
+		{
+			interaction[i][j] = free_particles;
+		}
+	}
+
+	/* Done
+	/* Done
+	/* Done
+	/* Done
+	/* Done
+	/* Done
+	/* Done
+	/* Done
+	/* Done
+	/* Done
+	*/
 	~simulation();
 	
 };
