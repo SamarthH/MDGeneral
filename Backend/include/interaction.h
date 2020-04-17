@@ -3,12 +3,16 @@
 
 #include "system.h"
 
-double distance(simulation*, int type1, int n1, int type2, int n2); //Gives the distance between two particles labelled number n1,n2 of type1,type2 respectively in the position array
+/*Gives the distance between two particles labelled number n1,n2 of type1,type2 respectively in the position array*/
+double distance(system::simulation&, int type1, int n1, int type2, int n2);
 
-void interact(simulation*); //Calls the required interaction functions
+/*Calls the required interaction functions*/
+void interact(system::simulation&);
 
-void free_particles(simulation*,int,int);//Free particles
+/*Free particles*/
+void free_particles(system::simulation&,int,int);
 
-void lj_periodic(simulation*,int,int); //Lennard-Jones potential for periodic boundary conditions and cutoff = half the box size
+/*Lennard-Jones potential for periodic boundary conditions and cutoff = half the box size*/
+void lj_periodic(system::simulation&,int,int); 
 
 #endif
