@@ -1,0 +1,7 @@
+To build this program, you would need to install trng library from https://github.com/rabauke/trng4
+After you have done so, go to MDGeneral/Backend/src
+Now,
+
+make nest
+make
+make clean
