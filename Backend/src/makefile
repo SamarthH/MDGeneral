@@ -20,6 +20,8 @@ $(ODIR)/%.o: %.cpp $(DEPS)
 mdgen_back: $(OBJ)
 	$(CC) -o $@ $^ $(CFLAGS) $(LIBS)
 
+	mv mdgen_back ../
+
 .PHONY: clean
 
 clean:
