@@ -1,4 +1,6 @@
 #include"initialize.h"
+#include <trng/yarn2.hpp>
+#include <trng/uniform01_dist.hpp>
 
 void init_sim(System::simulation& sim)
 {
@@ -6,13 +8,7 @@ void init_sim(System::simulation& sim)
     double vel2sum[sim.n_types];
     double scale[sim.n_types];
 
-    //Initializing the randomization
-    std:: random_device rd;
-    std::mt19937 gen(rd());
-    std::uniform_real_distribution<> unif(0, 1);
-    //Randomization Initialized
-
-
+    #pragma omp target teams distribute parallel for
     for(int i = 0; i < sim.n_types;++i)
     {
         vel2sum[i]=0;
@@ -21,12 +17,22 @@ void init_sim(System::simulation& sim)
         {
             velsum[i][k]=0;
         }
+        #pragma omp parallel for
         for(int j = 0; j < sim.n_particles[i];++j)
         {
+            #pragma omp parallel for
             for(int k = 0; k < sim.n_dimensions;++k)
             {
-                sim.position[i][j][k] = unif(gen)*sim.box_size_limits[k];
-                sim.velocity[i][j][k] = (unif(gen) - 0.5);
+                trng::yarn2 R;
+
+                int size = omp_get_num_threads();
+                int rank = omp_get_thread_num();
+                R.split(size,rank);
+
+                trng::uniform01_dist<> unif;
+
+                sim.position[i][j][k] = unif(R)*sim.box_size_limits[k];
+                sim.velocity[i][j][k] = (unif(R) - 0.5);
                 velsum[i][k]+=sim.velocity[i][j][k];
                 vel2sum[i]+=pow(sim.velocity[i][j][k],2);
             }
