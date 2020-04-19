@@ -8,6 +8,7 @@
 #include <string>
 #include <sstream>
 #include <vector>
+#include <cmath>
 #include "algorithm_constants.h"
 
 namespace System{
@@ -84,6 +85,7 @@ namespace System{
 		double rcut_lj; //Cutoff distance
 		double etrunc_lj; //Truncated Potential
 		double cutoff_rat_lj = CUTOFF_RATIO_LJ; //Default value of cutoff ratio
+		double sigma_lj_6;
 
 		void set_lj_cutoff(double cut)
 		{
@@ -94,12 +96,13 @@ namespace System{
 			epsilon_lj = epsilon;
 			sigma_lj = sigma;
 			rcut_lj = cutoff_rat_lj*sigma;
-			etrunc_lj = 4*epsilon*(std::pow(1/,12) - std::pow(1/cutoff_rat_lj,6));
+			etrunc_lj = 4*epsilon*(std::pow(1/cutoff_rat_lj,12) - std::pow(1/cutoff_rat_lj,6));
+			sigma_lj_6 = std::pow(sigma,6);
 		}
 
 		// Constants for <some other potential>
 
-	}
+	};
 
 	class constants_thermostat
 	{
@@ -113,9 +116,9 @@ namespace System{
 			anderson_nu = nu;
 		}
 
-	}
+	};
 
-	class simulation : public system_state, public input_params
+	class simulation : public system_state, public input_params, public constants_interaction, public constants_thermostat
 	{
 	public:
 		std::vector<void (*)(simulation&, int)> thermostat; //This stores thermostats for different particle sets
