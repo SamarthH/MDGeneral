@@ -8,6 +8,7 @@
 #include <string>
 #include <sstream>
 #include <vector>
+#include "algorithm_constants.h"
 
 namespace System{
 	class system_state
@@ -72,6 +73,47 @@ namespace System{
 			
 		}
 	};
+
+	class constants_interaction
+	{
+	public:
+		//Constants for LJ potential
+
+		double epsilon_lj;
+		double sigma_lj;
+		double rcut_lj; //Cutoff distance
+		double etrunc_lj; //Truncated Potential
+		double cutoff_rat_lj = CUTOFF_RATIO_LJ; //Default value of cutoff ratio
+
+		void set_lj_cutoff(double cut)
+		{
+			cutoff_rat_lj = cut;
+		}
+		void set_lj(double epsilon, double sigma) //Call this for initialization
+		{
+			epsilon_lj = epsilon;
+			sigma_lj = sigma;
+			rcut_lj = cutoff_rat_lj*sigma;
+			etrunc_lj = 4*epsilon*(std::pow(1/,12) - std::pow(1/cutoff_rat_lj,6));
+		}
+
+		// Constants for <some other potential>
+
+	}
+
+	class constants_thermostat
+	{
+	public:
+		//Constants for Anderson Thermostat
+
+		double anderson_nu = ANDERSON_NU;
+
+		void set_anderson_nu(double nu)
+		{
+			anderson_nu = nu;
+		}
+
+	}
 
 	class simulation : public system_state, public input_params
 	{

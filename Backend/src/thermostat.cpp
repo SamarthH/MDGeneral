@@ -41,7 +41,7 @@ void anderson(System::simulation& sim, int type){
 			R1.split(size,rank);
 			R2.split(size,rank);
 
-			if(unif(R1) <= ANDERSON_NU*(sim.timestep)){
+			if(unif(R1) <= sim.anderson_nu*(sim.timestep)){
 				sim.velocity[type][j][k] = norm(R2);
 			}
 		}
