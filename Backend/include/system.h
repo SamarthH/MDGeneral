@@ -25,7 +25,41 @@ namespace System{
 		std::vector<double> energy_kinetic; //Defines the kinetic energy of each particle type
 		double time;
 		int state;
-		system_state(){
+		system_state(int n_types, int n_dimensions, std::vector<int>& n_particles){
+			//Allocating (reserving) system_state variables
+			try{
+				temperature.reserve(n_types);
+				energy_kinetic.reserve(n_types);
+				position.reserve(n_types);
+				velocity.reserve(n_types);
+				orientation.reserve(n_types);
+				acceleration.reserve(n_types);
+
+				for (int i = 0; i < n_types; ++i)
+				{
+					position[i].reserve(n_particles[i]);
+					velocity[i].reserve(n_particles[i]);
+					orientation[i].reserve(n_particles[i]);
+					acceleration[i].reserve(n_particles[i]);
+
+					for (int j = 0; j < n_particles[i]; ++j)
+					{
+						position[i][j].reserve(n_dimensions);
+						velocity[i][j].reserve(n_dimensions);
+						orientation[i][j].reserve(n_dimensions);
+						acceleration[i][j].reserve(n_dimensions);
+					}
+				}
+			}
+			catch(const std::length_error& le){
+				std::cerr<<"Error 0001"<<std::endl; 
+				exit(0001);
+			}
+			catch(const std::bad_alloc& ba){
+				std::cerr<<"Error 0002"<<std::endl;
+				exit(0002);
+			}
+			//Done
 		}
 	};
 
@@ -80,18 +114,16 @@ namespace System{
 	public:
 		//Constants for LJ potential
 
-		double epsilon_lj;
-		double sigma_lj;
-		double rcut_lj; //Cutoff distance
-		double etrunc_lj; //Truncated Potential
-		double cutoff_rat_lj = CUTOFF_RATIO_LJ; //Default value of cutoff ratio
-		double sigma_lj_6;
+		std::vector<std::vector<double>> epsilon_lj;
+		std::vector<std::vector<double>> sigma_lj;
+		std::vector<std::vector<double>> rcut_lj; //Cutoff distance
+		std::vector<std::vector<double>> etrunc_lj; //Truncated Potential
+		std::vector<std::vector<double>> cutoff_rat_lj; //Default value of cutoff ratio
+		std::vector<std::vector<double>> sigma_lj_6;
+		std::vector<std::vector<double>> etail_lj;
 
-		void set_lj_cutoff(double cut)
-		{
-			cutoff_rat_lj = cut;
-		}
-		void set_lj(double epsilon, double sigma) //Call this for initialization
+		/*
+		void set_lj(std::vector<std::vector<double>> epsilon, std::vector<std::vector<double>> sigma) //Call this for initialization
 		{
 			epsilon_lj = epsilon;
 			sigma_lj = sigma;
@@ -99,8 +131,54 @@ namespace System{
 			etrunc_lj = 4*epsilon*(std::pow(1/cutoff_rat_lj,12) - std::pow(1/cutoff_rat_lj,6));
 			sigma_lj_6 = std::pow(sigma,6);
 		}
-
+		*/
 		// Constants for <some other potential>
+
+		// Parametrized Constructor
+
+		constants_interaction(int n_types)
+		{
+			try{
+
+				//Allocating for LJ potential
+
+				epsilon_lj.reserve(n_types);
+				sigma_lj.reserve(n_types);
+				rcut_lj.reserve(n_types);
+				etrunc_lj.reserve(n_types);
+				cutoff_rat_lj.reserve(n_types);
+				sigma_lj_6.reserve(n_types);
+				etail_lj.reserve(n_types);
+				
+				for (int i = 0; i < n_types; ++i)
+				{
+					epsilon_lj[i].reserve(n_types);
+					sigma_lj[i].reserve(n_types);
+					rcut_lj[i].reserve(n_types);
+					etrunc_lj[i].reserve(n_types);
+					cutoff_rat_lj[i].reserve(n_types);
+					sigma_lj_6[i].reserve(n_types);
+					etail_lj[i].reserve(n_types);
+
+					for (int j = 0; j < n_types; ++j)
+					{
+						cutoff_rat_lj[i][j] = CUTOFF_RATIO_LJ; //Setting default value
+					}
+				}
+
+				//Done allocating for LJ
+
+
+			}
+			catch(const std::length_error& le){
+				std::cerr<<"Error 0001"<<std::endl; 
+				exit(0001);
+			}
+			catch(const std::bad_alloc& ba){
+				std::cerr<<"Error 0002"<<std::endl;
+				exit(0002);
+			}
+		}
 
 	};
 
@@ -118,14 +196,14 @@ namespace System{
 
 	};
 
-	class simulation : public system_state, public input_params, public constants_interaction, public constants_thermostat
+	class simulation : public input_params, public system_state, public constants_interaction, public constants_thermostat
 	{
 	public:
 		std::vector<void (*)(simulation&, int)> thermostat; //This stores thermostats for different particle sets
 		std::vector<std::vector<void (*)(simulation&, int, int)>> interaction; //This defines the set of functions for interaction between different particle types. Also allows for non-symmetric interaction.
 		std::vector<double> box_size_limits; // We assume that the initial limits are all (0,0,0,...,0) to whatever the limits define for a box (allocate to n_dimensions size)
 
-		simulation(std::string input, double size[]):input_params(input)
+		simulation(std::string input, double size[]):input_params(input), system_state(n_types,n_dimensions,n_particles), constants_interaction(n_types)
 		{
 
 			//Please check here @Sweptile
@@ -138,44 +216,13 @@ namespace System{
 				std::cerr<<"Error 0001"<<std::endl; 
 				exit(0001);
 			}
-			for (int i = 0; i < n_dimensions; ++i)
-			{
-				box_size_limits.push_back(size[i]);
-			}
-			//Done
-
-			//Allocating (reserving) system_state variables
-			try{
-				temperature.reserve(n_types);
-				energy_kinetic.reserve(n_types);
-				position.reserve(n_types);
-				velocity.reserve(n_types);
-				orientation.reserve(n_types);
-				acceleration.reserve(n_types);
-
-				for (int i = 0; i < n_types; ++i)
-				{
-					position[i].reserve(n_particles[i]);
-					velocity[i].reserve(n_particles[i]);
-					orientation[i].reserve(n_particles[i]);
-					acceleration[i].reserve(n_particles[i]);
-
-					for (int j = 0; j < n_particles[i]; ++j)
-					{
-						position[i][j].reserve(n_dimensions);
-						velocity[i][j].reserve(n_dimensions);
-						orientation[i][j].reserve(n_dimensions);
-						acceleration[i][j].reserve(n_dimensions);
-					}
-				}
-			}
-			catch(const std::length_error& le){
-				std::cerr<<"Error 0001"<<std::endl; 
-				exit(0001);
-			}
 			catch(const std::bad_alloc& ba){
 				std::cerr<<"Error 0002"<<std::endl;
 				exit(0002);
+			}
+			for (int i = 0; i < n_dimensions; ++i)
+			{
+				box_size_limits.push_back(size[i]);
 			}
 			//Done
 
