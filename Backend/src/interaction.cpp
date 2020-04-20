@@ -69,22 +69,22 @@ void lj_periodic(System::simulation& sim, int type1, int type2){
 	// As of now, assuming that r_c <= min(box_size)/2
 
 	double epot =0; //Temp storage of potential energy
-	#pragma omp target teams distribute parallel for collapse(2)
+	#pragma omp target teams distribute parallel for collapse(2) reduction(+ : epot)
 	for (int i = 0; i < sim.n_particles[type1]; ++i)
 	{
 		for (int j = 0; j < sim.n_particles[type2]; ++j)
 		{
 			double r = distance_periodic(sim,type1,i,type2,j);
-			if(r < sim.rcut_lj)
+			if(r < sim.rcut_lj[type1][type2])
 			{
 				double f = 0;
 				double r2 = r*r;
 				double r6 = r2*r2*r2;
 
-				double b1 = 4*sim.epsilon_lj*sim.sigma_lj_6/r6;
-				double b2 = sim.sigma_lj_6/r6;
+				double b1 = 4*sim.epsilon_lj[type1][type2]*sim.sigma_lj_6[type1][type2]/r6;
+				double b2 = sim.sigma_lj_6[type1][type2]/r6;
 
-				epot+= b1*(b2-1);
+				epot+= (b1*(b2-1)-sim.etrunc_lj[type1][type2]);
 
 				f = 6*b1*(2*b2-1)/r2;
 
