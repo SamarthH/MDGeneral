@@ -11,7 +11,7 @@ for index, value in enumerate(arr):
   output+=","
 
 op_file = open("pro_input.txt", "w")
-op_file.write(output)
+op_file.write(output[:-1])
 
 op_file.close()
 ip_file.close()
