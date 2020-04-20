@@ -48,7 +48,7 @@ public:
 		
 		while(ss.good()){			//This packages the input string (comma separated) into the input_vector object
 			std::string temp;
-			std::getline(ss, temp, ",");
+			std::getline(ss, temp, ',');
 			input_vector.push_back(std::stod(temp));
 		}
 		
