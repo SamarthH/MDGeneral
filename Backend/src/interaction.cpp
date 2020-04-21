@@ -117,5 +117,58 @@ void lj_periodic(System::simulation& sim, int type1, int type2){
 		epot/=2;
 	}
 
+	epot+=sim.etail_lj[type1][type2];
+
+	sim.energy_potential+=epot;
+}
+
+void lj_box(System::simulation& sim, int type1, int type2){
+	// As of now, assuming that r_c <= min(box_size)/2
+
+	double epot =0; //Temp storage of potential energy
+	#pragma omp target teams distribute parallel for collapse(2) reduction(+ : epot)
+	for (int i = 0; i < sim.n_particles[type1]; ++i)
+	{
+		for (int j = 0; j < sim.n_particles[type2]; ++j)
+		{
+			double r2 = 0;
+
+			for (int k = 0; k < sim.n_dimensions; ++k)
+			{
+				r2 += std::pow(sim.position[type1][i][k] - sim.position[type2][j][k],2);
+			}
+
+			if(std::sqrt(r2) < sim.rcut_lj[type1][type2])
+			{
+				double f = 0;
+				double r6 = r2*r2*r2;
+
+				double b1 = 4*sim.epsilon_lj[type1][type2]*sim.sigma_lj_6[type1][type2]/r6;
+				double b2 = sim.sigma_lj_6[type1][type2]/r6;
+
+				epot+= (b1*(b2-1)-sim.etrunc_lj[type1][type2]);
+
+				f = 6*b1*(2*b2-1)/r2;
+
+				double fx;
+				#pragma omp parallel for
+				for (int k = 0; k < sim.n_dimensions; ++k)
+				{
+					double x = sim.position[type1][i][k] - sim.position[type2][j][k];
+					fx = f*x;
+					#pragma omp atomic
+					sim.acceleration[type1][i][k] += fx/sim.mass[type1];
+					#pragma omp atomic
+					sim.acceleration[type2][j][k] -= fx/sim.mass[type2];
+				}
+			}
+		}
+	}
+
+
+	if(type1 == type2){
+		epot/=2;
+	}
+
 	sim.energy_potential+=epot;
 }
