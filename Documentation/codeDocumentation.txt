@@ -1,0 +1,24 @@
+Implementation of Potentials
+
+Lennard Jones Potential: 
+
+	Potential : U(r) = 4\epsilon*[(\frac{\sigma}{r})^12 - (\frac{\sigma}{r})^6] - U(r_cut)
+	Force : F(r) = 24\epsilon*\frac{\sigma^6}{r^7}*[2(\frac{\sigma}{r})^6 - 1] \vu{r}
+
+	Here, the constants vector is as follows:
+	interaction_const[i][j][0] = \epsilon
+	interaction_const[i][j][1] = \sigma
+	interaction_const[i][j][2] = Cutoff radius/distance (r_cut)
+	interaction_const[i][j][3] = Truncated Potential (etrunc)
+	interaction_const[i][j][4] = \sigma^6
+	interaction_const[i][j][5] = Tail Energy (assuming constant distribution outside cutoff radius)
+
+
+Implementation of Thermostats
+
+Anderson Thermostat:
+
+	For this, a particle is given a speed from the gaussian distribution with 0 mean and \frac{k_{b}*T_{req}}{m} variance with a probability of \nu per unit time. 
+
+	Here, the constants vector is as follows:
+	thermostat_const[i][0] = \nu
