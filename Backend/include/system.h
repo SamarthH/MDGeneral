@@ -1,9 +1,7 @@
 #ifndef SYSTEM_H
 #define SYSTEM_H 
 
-//#include <stdio.h>
 #include <iostream>
-//#include <stdlib.h>
 #include <omp.h>
 #include <string>
 #include <sstream>
@@ -112,63 +110,22 @@ namespace System{
 	class constants_interaction
 	{
 	public:
-		//Constants for LJ potential
-
-		std::vector<std::vector<double>> epsilon_lj;
-		std::vector<std::vector<double>> sigma_lj;
-		std::vector<std::vector<double>> rcut_lj; //Cutoff distance
-		std::vector<std::vector<double>> etrunc_lj; //Truncated Potential
-		std::vector<std::vector<double>> cutoff_rat_lj; //Default value of cutoff ratio
-		std::vector<std::vector<double>> sigma_lj_6;
-		std::vector<std::vector<double>> etail_lj;
-
-		/*
-		void set_lj(std::vector<std::vector<double>> epsilon, std::vector<std::vector<double>> sigma) //Call this for initialization
-		{
-			epsilon_lj = epsilon;
-			sigma_lj = sigma;
-			rcut_lj = cutoff_rat_lj*sigma;
-			etrunc_lj = 4*epsilon*(std::pow(1/cutoff_rat_lj,12) - std::pow(1/cutoff_rat_lj,6));
-			sigma_lj_6 = std::pow(sigma,6);
-		}
-		*/
-		// Constants for <some other potential>
+		std::vector<std::vector<std::vector<double>>> interaction_const;
 
 		// Parametrized Constructor
 
 		constants_interaction(int n_types)
 		{
 			try{
-
-				//Allocating for LJ potential
-
-				epsilon_lj.reserve(n_types);
-				sigma_lj.reserve(n_types);
-				rcut_lj.reserve(n_types);
-				etrunc_lj.reserve(n_types);
-				cutoff_rat_lj.reserve(n_types);
-				sigma_lj_6.reserve(n_types);
-				etail_lj.reserve(n_types);
-				
+				interaction_const.reserve(n_types);
 				for (int i = 0; i < n_types; ++i)
 				{
-					epsilon_lj[i].reserve(n_types);
-					sigma_lj[i].reserve(n_types);
-					rcut_lj[i].reserve(n_types);
-					etrunc_lj[i].reserve(n_types);
-					cutoff_rat_lj[i].reserve(n_types);
-					sigma_lj_6[i].reserve(n_types);
-					etail_lj[i].reserve(n_types);
-
+					interaction_const[i].reserve(n_types);
 					for (int j = 0; j < n_types; ++j)
 					{
-						cutoff_rat_lj[i][j] = CUTOFF_RATIO_LJ; //Setting default value
+						interaction_const[i][j].reserve(8);
 					}
 				}
-
-				//Done allocating for LJ
-
-
 			}
 			catch(const std::length_error& le){
 				std::cerr<<"Error 0001"<<std::endl; 
@@ -185,15 +142,28 @@ namespace System{
 	class constants_thermostat
 	{
 	public:
-		//Constants for Anderson Thermostat
+		std::vector<std::vector<double>> thermostat_const;
 
-		double anderson_nu = ANDERSON_NU;
+		// Parametrized Constructor
 
-		void set_anderson_nu(double nu)
+		constants_thermostat(int n_types)
 		{
-			anderson_nu = nu;
+			try{
+				thermostat_const.reserve(n_types);
+				for (int i = 0; i < n_types; ++i)
+				{
+					thermostat_const[i].reserve(4);
+				}
+			}
+			catch(const std::length_error& le){
+				std::cerr<<"Error 0001"<<std::endl; 
+				exit(0001);
+			}
+			catch(const std::bad_alloc& ba){
+				std::cerr<<"Error 0002"<<std::endl;
+				exit(0002);
+			}
 		}
-
 	};
 
 	class simulation : public input_params, public system_state, public constants_interaction, public constants_thermostat
@@ -203,7 +173,7 @@ namespace System{
 		std::vector<std::vector<void (*)(simulation&, int, int)>> interaction; //This defines the set of functions for interaction between different particle types. Also allows for non-symmetric interaction.
 		std::vector<double> box_size_limits; // We assume that the initial limits are all (0,0,0,...,0) to whatever the limits define for a box (allocate to n_dimensions size)
 
-		simulation(std::string input, double size[]):input_params(input), system_state(n_types,n_dimensions,n_particles), constants_interaction(n_types)
+		simulation(std::string input, double size[]):input_params(input), system_state(n_types,n_dimensions,n_particles), constants_interaction(n_types), constants_thermostat(n_types)
 		{
 
 			//Please check here @Sweptile
