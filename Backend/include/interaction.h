@@ -12,7 +12,10 @@ void interact(System::simulation&);
 /*Free particles*/
 void free_particles(System::simulation&,int,int);
 
-/*Lennard-Jones potential for periodic boundary conditions and cutoff = half the box size*/
+/*Lennard-Jones potential for periodic boundary conditions and cutoff <= half the box size*/
 void lj_periodic(System::simulation&,int,int); 
+
+/*Lennard-Jones potential for periodic boundary conditions and cutoff < box size*/
+void lj_periodic(System::simulation&,int,int);
 
 #endif
