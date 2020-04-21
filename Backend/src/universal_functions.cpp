@@ -1,7 +1,8 @@
 #include "universal_functions.h"
 #include <cmath>
+#include <iostream>
 
-double gamma(double x) //Lookup table for gamma function (This was generated)
+double gamma_func(double x) //Lookup table for gamma function (This was generated)
 {
 	int y = (int)(2*x);
 	switch(y)
@@ -208,6 +209,8 @@ double gamma(double x) //Lookup table for gamma function (This was generated)
 		case 200 : return 933262154439440960000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000.0000000000; break;
 
 	}	
+	std::cerr<<"Error 0005"<<std::endl;
+	exit(0005);
 }
 double vol_unit_sphere(int dim) //Lookup table for volume of unit sphere (Don't worry. This was generated)
 {
@@ -315,7 +318,10 @@ double vol_unit_sphere(int dim) //Lookup table for volume of unit sphere (Don't 
 		case 100 : return 0.00000000000000000000000000000000000000015076442830; break;
 
 	}
+
+	std::cerr<<"Error 0006"<<std::endl;
+	exit(0006);
 }
 double surface_unit_sphere(int dim){
-	return 2*M_PI*vol_unit_sphere(n-1);
+	return 2*M_PI*vol_unit_sphere(dim-1);
 }

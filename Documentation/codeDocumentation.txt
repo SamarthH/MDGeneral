@@ -13,6 +13,9 @@ Lennard Jones Potential:
 	interaction_const[i][j][4] = \sigma^6
 	interaction_const[i][j][5] = Tail Energy (assuming constant distribution outside cutoff radius)
 
+	Limitations :
+	Beacause the truncation method has been used, this potential can only be used for upto 4 space dimensions
+
 
 Implementation of Thermostats
 

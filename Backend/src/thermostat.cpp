@@ -41,7 +41,7 @@ void anderson(System::simulation& sim, int type){
 			R1.split(size,rank);
 			R2.split(size,rank);
 
-			if(unif(R1) <= sim.anderson_nu*(sim.timestep)){
+			if(unif(R1) <= sim.thermostat_const[j][0]*(sim.timestep)){
 				sim.velocity[type][j][k] = norm(R2);
 			}
 		}

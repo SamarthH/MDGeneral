@@ -3,7 +3,46 @@
 #include <cstdlib>
 #include <cmath>
 #include <algorithm>
+#include "universal_functions.h"
 #include "interaction.h"
+
+void initialize_interactions(System::simulation& sim)
+{
+	int dim = sim.n_dimensions;
+	double vol = 1;
+	for (int i = 0; i < sim.n_dimensions; ++i)
+	{
+		vol*= sim.box_size_limits[i];
+	}
+	for (int i = 0; i < sim.n_types; ++i)
+	{
+		for (int j = 0; j < sim.n_types; ++j)
+		{
+			if(sim.interaction[i][j] == lj_periodic || sim.interaction[i][j] == lj_box)
+			{
+				/*
+				interaction_const[i][j][0] = \epsilon
+				interaction_const[i][j][1] = \sigma
+				interaction_const[i][j][2] = Cutoff radius/distance (r_cut)
+				interaction_const[i][j][3] = Truncated Potential (etrunc)
+				interaction_const[i][j][4] = \sigma^6
+				interaction_const[i][j][5] = Tail Energy (assuming constant distribution outside cutoff radius)
+				*/
+				sim.interaction_const[i][j][4] = std::pow(sim.interaction_const[i][j][1],6);
+				double temp = sim.interaction_const[i][j][4]/std::pow(sim.interaction_const[i][j][2],6); //temp = (sigma/r_cut)^6
+				sim.interaction_const[i][j][3] = 4*sim.interaction_const[i][j][0]*temp*(temp-1);
+				sim.interaction_const[i][j][5] = 2*sim.interaction_const[i][j][0]*(sim.n_particles[i]*sim.n_particles[j]/vol)*surface_unit_sphere(dim);
+				sim.interaction_const[i][j][5] *= (sim.interaction_const[i][j][4]*sim.interaction_const[i][j][4]*std::pow(sim.interaction_const[i][j][2],dim-12)/(dim-12) - sim.interaction_const[i][j][4]*std::pow(sim.interaction_const[i][j][2],dim-6)/(dim-6));
+
+			}
+			else
+			{
+				std::cerr<<"Error 0003"<<std::endl;
+				exit(0003);
+			}
+		}
+	}
+}
 
 double distance_periodic(System::simulation& sim, int type1, int n1, int type2, int n2)
 {
@@ -85,16 +124,16 @@ void lj_periodic(System::simulation& sim, int type1, int type2){
 		for (int j = 0; j < sim.n_particles[type2]; ++j)
 		{
 			double r = distance_periodic(sim,type1,i,type2,j);
-			if(r < interaction_const[type1][type2][2])
+			if(r < sim.interaction_const[type1][type2][2])
 			{
 				double f = 0;
 				double r2 = r*r;
 				double r6 = r2*r2*r2;
 
-				double b1 = 4*interaction_const[type1][type2][0]*interaction_const[type1][type2][4]/r6;
-				double b2 = interaction_const[type1][type2][4]/r6;
+				double b1 = 4*sim.interaction_const[type1][type2][0]*sim.interaction_const[type1][type2][4]/r6;
+				double b2 = sim.interaction_const[type1][type2][4]/r6;
 
-				epot+= (b1*(b2-1)-interaction_const[type1][type2][3]);
+				epot+= (b1*(b2-1)-sim.interaction_const[type1][type2][3]);
 
 				f = 6*b1*(2*b2-1)/r2;
 
@@ -127,7 +166,7 @@ void lj_periodic(System::simulation& sim, int type1, int type2){
 		epot/=2;
 	}
 
-	epot+=interaction_const[type1][type2][5];
+	epot+=sim.interaction_const[type1][type2][5];
 
 	sim.energy_potential+=epot;
 }
@@ -156,15 +195,15 @@ void lj_box(System::simulation& sim, int type1, int type2){
 				r2 += std::pow(sim.position[type1][i][k] - sim.position[type2][j][k],2);
 			}
 
-			if(std::sqrt(r2) < interaction_const[type1][type2][2])
+			if(std::sqrt(r2) < sim.interaction_const[type1][type2][2])
 			{
 				double f = 0;
 				double r6 = r2*r2*r2;
 
-				double b1 = 4*interaction_const[type1][type2][0]*interaction_const[type1][type2][4]/r6;
-				double b2 = interaction_const[type1][type2][4]/r6;
+				double b1 = 4*sim.interaction_const[type1][type2][0]*sim.interaction_const[type1][type2][4]/r6;
+				double b2 = sim.interaction_const[type1][type2][4]/r6;
 
-				epot+= (b1*(b2-1)-interaction_const[type1][type2][3]);
+				epot+= (b1*(b2-1)-sim.interaction_const[type1][type2][3]);
 
 				f = 6*b1*(2*b2-1)/r2;
 
@@ -188,7 +227,7 @@ void lj_box(System::simulation& sim, int type1, int type2){
 		epot/=2;
 	}
 
-	epot+=interaction_const[type1][type2][5];
+	epot+=sim.interaction_const[type1][type2][5];
 
 	sim.energy_potential+=epot;
 }

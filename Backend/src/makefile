@@ -7,10 +7,10 @@ LDIR =../lib
 
 LIBS= -ltrng4 -fopenmp
 
-_DEPS = algorithm_constants.h client.h constants.h initialize.h integrate.h interaction.h system.h thermo.h thermostat.h write.h
+_DEPS = algorithm_constants.h client.h constants.h initialize.h integrate.h interaction.h system.h thermo.h thermostat.h write.h universal_functions.h
 DEPS = $(patsubst %,$(IDIR)/%,$(_DEPS))
 
-_OBJ = client.o initialize.o integrate.o interaction.o thermo.o thermostat.o write.o
+_OBJ = client.o initialize.o integrate.o interaction.o thermo.o thermostat.o write.o universal_functions.o
 OBJ = $(patsubst %,$(ODIR)/%,$(_OBJ))
 
 
