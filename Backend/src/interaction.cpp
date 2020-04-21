@@ -68,6 +68,16 @@ void free_particles(System::simulation& sim, int type1, int type2)
 void lj_periodic(System::simulation& sim, int type1, int type2){
 	// As of now, assuming that r_c <= min(box_size)/2
 
+	/*
+	interaction_const[i][j][0] = \epsilon
+	interaction_const[i][j][1] = \sigma
+	interaction_const[i][j][2] = Cutoff radius/distance (r_cut)
+	interaction_const[i][j][3] = Truncated Potential (etrunc)
+	interaction_const[i][j][4] = \sigma^6
+	interaction_const[i][j][5] = Tail Energy (assuming constant distribution outside cutoff radius)
+	*/
+
+
 	double epot =0; //Temp storage of potential energy
 	#pragma omp target teams distribute parallel for collapse(2) reduction(+ : epot)
 	for (int i = 0; i < sim.n_particles[type1]; ++i)
@@ -75,16 +85,16 @@ void lj_periodic(System::simulation& sim, int type1, int type2){
 		for (int j = 0; j < sim.n_particles[type2]; ++j)
 		{
 			double r = distance_periodic(sim,type1,i,type2,j);
-			if(r < sim.rcut_lj[type1][type2])
+			if(r < interaction_const[type1][type2][2])
 			{
 				double f = 0;
 				double r2 = r*r;
 				double r6 = r2*r2*r2;
 
-				double b1 = 4*sim.epsilon_lj[type1][type2]*sim.sigma_lj_6[type1][type2]/r6;
-				double b2 = sim.sigma_lj_6[type1][type2]/r6;
+				double b1 = 4*interaction_const[type1][type2][0]*interaction_const[type1][type2][4]/r6;
+				double b2 = interaction_const[type1][type2][4]/r6;
 
-				epot+= (b1*(b2-1)-sim.etrunc_lj[type1][type2]);
+				epot+= (b1*(b2-1)-interaction_const[type1][type2][3]);
 
 				f = 6*b1*(2*b2-1)/r2;
 
@@ -117,13 +127,21 @@ void lj_periodic(System::simulation& sim, int type1, int type2){
 		epot/=2;
 	}
 
-	epot+=sim.etail_lj[type1][type2];
+	epot+=interaction_const[type1][type2][5];
 
 	sim.energy_potential+=epot;
 }
 
 void lj_box(System::simulation& sim, int type1, int type2){
-	// As of now, assuming that r_c <= min(box_size)/2
+
+	/*
+	interaction_const[i][j][0] = \epsilon
+	interaction_const[i][j][1] = \sigma
+	interaction_const[i][j][2] = Cutoff radius/distance (r_cut)
+	interaction_const[i][j][3] = Truncated Potential (etrunc)
+	interaction_const[i][j][4] = \sigma^6
+	interaction_const[i][j][5] = Tail Energy (assuming constant distribution outside cutoff radius)
+	*/
 
 	double epot =0; //Temp storage of potential energy
 	#pragma omp target teams distribute parallel for collapse(2) reduction(+ : epot)
@@ -138,15 +156,15 @@ void lj_box(System::simulation& sim, int type1, int type2){
 				r2 += std::pow(sim.position[type1][i][k] - sim.position[type2][j][k],2);
 			}
 
-			if(std::sqrt(r2) < sim.rcut_lj[type1][type2])
+			if(std::sqrt(r2) < interaction_const[type1][type2][2])
 			{
 				double f = 0;
 				double r6 = r2*r2*r2;
 
-				double b1 = 4*sim.epsilon_lj[type1][type2]*sim.sigma_lj_6[type1][type2]/r6;
-				double b2 = sim.sigma_lj_6[type1][type2]/r6;
+				double b1 = 4*interaction_const[type1][type2][0]*interaction_const[type1][type2][4]/r6;
+				double b2 = interaction_const[type1][type2][4]/r6;
 
-				epot+= (b1*(b2-1)-sim.etrunc_lj[type1][type2]);
+				epot+= (b1*(b2-1)-interaction_const[type1][type2][3]);
 
 				f = 6*b1*(2*b2-1)/r2;
 
@@ -169,6 +187,8 @@ void lj_box(System::simulation& sim, int type1, int type2){
 	if(type1 == type2){
 		epot/=2;
 	}
+
+	epot+=interaction_const[type1][type2][5];
 
 	sim.energy_potential+=epot;
 }
