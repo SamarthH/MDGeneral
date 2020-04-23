@@ -1,6 +1,7 @@
 IDIR =../include
 CC=g++
 CFLAGS=-I$(IDIR) -Wall 
+EXTRAFLAGS=
 
 ODIR=obj
 LDIR =../lib
@@ -15,10 +16,10 @@ OBJ = $(patsubst %,$(ODIR)/%,$(_OBJ))
 
 
 $(ODIR)/%.o: %.cpp $(DEPS)
-	$(CC) -L$(LDIR) -c -o $@ $< $(CFLAGS) $(LIBS)
+	$(CC) -L$(LDIR) -c -o $@ $< $(CFLAGS) $(EXTRAFLAGS) $(LIBS)
 
 mdgen_back: $(OBJ)
-	$(CC) -o $@ $^ $(CFLAGS) $(LIBS)
+	$(CC) -o $@ $^ $(CFLAGS) $(EXTRAFLAGS) $(LIBS)
 
 	mv mdgen_back ../
 
