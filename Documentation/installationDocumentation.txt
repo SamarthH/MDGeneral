@@ -2,6 +2,24 @@ To build this program, you would need to install trng library from https://githu
 After you have done so, go to MDGeneral/Backend/src
 Now,
 
-make nest
-make
-make clean
+For normal install :
+	make nest
+	make
+	make clean
+
+NOTE : Use make clan only when you want to remove the .o files
+
+For debug install : (using gdb)
+	make nest
+	make EXTRAFLAGS='-g'
+	make clean
+
+For profiling install : (using gprof)
+	make nest
+	make EXTRAFLAGS='-pg'
+	make clean
+
+Notes on using profiler :
+	For using the profiler, perform the profiling install and then run the program (mdgen_back). After this,
+
+	gprof mdgen_back > profile.txt
