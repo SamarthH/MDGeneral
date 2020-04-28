@@ -1,0 +1,85 @@
+\hypertarget{thermostat_8cpp}{}\doxysection{Backend/src/thermostat.cpp File Reference}
+\label{thermostat_8cpp}\index{Backend/src/thermostat.cpp@{Backend/src/thermostat.cpp}}
+{\ttfamily \#include \char`\"{}thermostat.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}trng/yarn2.\+hpp\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}trng/normal\+\_\+dist.\+hpp\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}trng/uniform01\+\_\+dist.\+hpp\char`\"{}}\newline
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{thermostat_8cpp_a00f69897e3cd72a38058f74a18d49f89}{call\+\_\+thermostat}} (\mbox{\hyperlink{class_system_1_1simulation}{System\+::simulation}} \&sim)
+\begin{DoxyCompactList}\small\item\em This function calls all the required thermostats. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{thermostat_8cpp_ad8166b71b8112ef64df307d496635ad8}{no\+\_\+thermostat}} (\mbox{\hyperlink{class_system_1_1simulation}{System\+::simulation}} \&sim, int type)
+\begin{DoxyCompactList}\small\item\em Call when no thermostat is to be used. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{thermostat_8cpp_a44b5d54fe3da7c4a0d6850b76a4da269}{anderson}} (\mbox{\hyperlink{class_system_1_1simulation}{System\+::simulation}} \&sim, int type)
+\begin{DoxyCompactList}\small\item\em Call when anderson thermostat is to be used. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Function Documentation}
+\mbox{\Hypertarget{thermostat_8cpp_a44b5d54fe3da7c4a0d6850b76a4da269}\label{thermostat_8cpp_a44b5d54fe3da7c4a0d6850b76a4da269}} 
+\index{thermostat.cpp@{thermostat.cpp}!anderson@{anderson}}
+\index{anderson@{anderson}!thermostat.cpp@{thermostat.cpp}}
+\doxysubsubsection{\texorpdfstring{anderson()}{anderson()}}
+{\footnotesize\ttfamily void anderson (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{class_system_1_1simulation}{System\+::simulation}} \&}]{sim,  }\item[{int}]{type }\end{DoxyParamCaption})}
+
+
+
+Call when anderson thermostat is to be used. 
+
+Applies the anderson thermostat on the required particle types
+
+
+\begin{DoxyParams}{Parameters}
+{\em sim} & Simulation being used \\
+\hline
+{\em type} & Type of particle for thermalization \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 18 of file thermostat.\+cpp.
+
+\mbox{\Hypertarget{thermostat_8cpp_a00f69897e3cd72a38058f74a18d49f89}\label{thermostat_8cpp_a00f69897e3cd72a38058f74a18d49f89}} 
+\index{thermostat.cpp@{thermostat.cpp}!call\_thermostat@{call\_thermostat}}
+\index{call\_thermostat@{call\_thermostat}!thermostat.cpp@{thermostat.cpp}}
+\doxysubsubsection{\texorpdfstring{call\_thermostat()}{call\_thermostat()}}
+{\footnotesize\ttfamily void call\+\_\+thermostat (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{class_system_1_1simulation}{System\+::simulation}} \&}]{sim }\end{DoxyParamCaption})}
+
+
+
+This function calls all the required thermostats. 
+
+Calls all the thermostats and updates the velocities of particles according to the chosen thermostat.
+
+
+\begin{DoxyParams}{Parameters}
+{\em sim} & Simulation being used \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 6 of file thermostat.\+cpp.
+
+\mbox{\Hypertarget{thermostat_8cpp_ad8166b71b8112ef64df307d496635ad8}\label{thermostat_8cpp_ad8166b71b8112ef64df307d496635ad8}} 
+\index{thermostat.cpp@{thermostat.cpp}!no\_thermostat@{no\_thermostat}}
+\index{no\_thermostat@{no\_thermostat}!thermostat.cpp@{thermostat.cpp}}
+\doxysubsubsection{\texorpdfstring{no\_thermostat()}{no\_thermostat()}}
+{\footnotesize\ttfamily void no\+\_\+thermostat (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{class_system_1_1simulation}{System\+::simulation}} \&}]{sim,  }\item[{int}]{type }\end{DoxyParamCaption})}
+
+
+
+Call when no thermostat is to be used. 
+
+Does nothing
+
+
+\begin{DoxyParams}{Parameters}
+{\em sim} & Simulation being used \\
+\hline
+{\em type} & Type of particle for thermalization \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 14 of file thermostat.\+cpp.
+

@@ -1,5 +1,12 @@
+/** @file */ 
 #include "integrate.h"
 
+/*******************************************************************************
+ * This function integrates the equation of motion for periodic boundary conditions
+ * This function integrates using the Leapfrog Algorithm 
+ *
+ * @param sim Simulation being integrated over
+ ******************************************************************************/
 void integrate_verdet_periodic(System::simulation& sim){
 	double dt = sim.timestep;
 	sim.energy_total = sim.energy_potential;
@@ -46,6 +53,12 @@ void integrate_verdet_periodic(System::simulation& sim){
 	sim.time+= dt;
 }
 
+/*******************************************************************************
+ * This function integrates the equation of motion for rigid box conditions
+ * This function integrates using the Leapfrog Algorithm 
+ *
+ * @param sim Simulation being integrated over
+ ******************************************************************************/
 void integrate_verdet_box(System::simulation& sim){
 	double dt = sim.timestep;
 	sim.energy_total = sim.energy_potential;

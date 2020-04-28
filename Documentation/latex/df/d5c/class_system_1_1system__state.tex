@@ -1,0 +1,168 @@
+\hypertarget{class_system_1_1system__state}{}\doxysection{System\+::system\+\_\+state Class Reference}
+\label{class_system_1_1system__state}\index{System::system\_state@{System::system\_state}}
+
+
+{\ttfamily \#include $<$system.\+h$>$}
+
+Inheritance diagram for System\+::system\+\_\+state\+:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{df/d5c/class_system_1_1system__state}
+\end{center}
+\end{figure}
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{class_system_1_1system__state_a7985ade1571399e881ca5485d5ebac13}{system\+\_\+state}} (int n\+\_\+types, int n\+\_\+dimensions, std\+::vector$<$ int $>$ \&n\+\_\+particles)
+\end{DoxyCompactItemize}
+\doxysubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+std\+::vector$<$ std\+::vector$<$ std\+::vector$<$ double $>$ $>$ $>$ \mbox{\hyperlink{class_system_1_1system__state_a37bfa6eb6a3e045b58f306d947f159ce}{position}}
+\item 
+std\+::vector$<$ std\+::vector$<$ std\+::vector$<$ double $>$ $>$ $>$ \mbox{\hyperlink{class_system_1_1system__state_ab291424472586d49e51b9bb633ccf8a2}{orientation}}
+\item 
+std\+::vector$<$ std\+::vector$<$ std\+::vector$<$ double $>$ $>$ $>$ \mbox{\hyperlink{class_system_1_1system__state_a74405f8207ccb0e85b4eb6cb360d56a5}{velocity}}
+\item 
+std\+::vector$<$ std\+::vector$<$ std\+::vector$<$ double $>$ $>$ $>$ \mbox{\hyperlink{class_system_1_1system__state_a915a3efb6cad48865aa69e972e567f53}{acceleration}}
+\item 
+std\+::vector$<$ double $>$ \mbox{\hyperlink{class_system_1_1system__state_a1800108621b05364cb9053c69e3e7fe3}{temperature}}
+\item 
+double \mbox{\hyperlink{class_system_1_1system__state_af32ee96b3713e32ec7c0c4fdf9bc674b}{energy\+\_\+total}}
+\item 
+double \mbox{\hyperlink{class_system_1_1system__state_a40835301e087910ec4bb38e89f2c213f}{energy\+\_\+potential}}
+\item 
+std\+::vector$<$ double $>$ \mbox{\hyperlink{class_system_1_1system__state_af94f1ac25de0e83601e114e259e73a24}{energy\+\_\+kinetic}}
+\item 
+double \mbox{\hyperlink{class_system_1_1system__state_a96bd6ddf6ce91b79bf9b1377ed2c8859}{time}}
+\item 
+int \mbox{\hyperlink{class_system_1_1system__state_a9e7d506fb6a2119b33fbfb7c537aaf04}{state}}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+
+
+Definition at line 14 of file system.\+h.
+
+
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{class_system_1_1system__state_a7985ade1571399e881ca5485d5ebac13}\label{class_system_1_1system__state_a7985ade1571399e881ca5485d5ebac13}} 
+\index{System::system\_state@{System::system\_state}!system\_state@{system\_state}}
+\index{system\_state@{system\_state}!System::system\_state@{System::system\_state}}
+\doxysubsubsection{\texorpdfstring{system\_state()}{system\_state()}}
+{\footnotesize\ttfamily System\+::system\+\_\+state\+::system\+\_\+state (\begin{DoxyParamCaption}\item[{int}]{n\+\_\+types,  }\item[{int}]{n\+\_\+dimensions,  }\item[{std\+::vector$<$ int $>$ \&}]{n\+\_\+particles }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line 27 of file system.\+h.
+
+
+
+\doxysubsection{Member Data Documentation}
+\mbox{\Hypertarget{class_system_1_1system__state_a915a3efb6cad48865aa69e972e567f53}\label{class_system_1_1system__state_a915a3efb6cad48865aa69e972e567f53}} 
+\index{System::system\_state@{System::system\_state}!acceleration@{acceleration}}
+\index{acceleration@{acceleration}!System::system\_state@{System::system\_state}}
+\doxysubsubsection{\texorpdfstring{acceleration}{acceleration}}
+{\footnotesize\ttfamily std\+::vector$<$std\+::vector$<$std\+::vector$<$double$>$ $>$ $>$ System\+::system\+\_\+state\+::acceleration}
+
+Vector of n\+\_\+types X n\+\_\+particles\mbox{[}of each type\mbox{]} X n\+\_\+dimensions size storing accelerations of particles 
+
+Definition at line 20 of file system.\+h.
+
+\mbox{\Hypertarget{class_system_1_1system__state_af94f1ac25de0e83601e114e259e73a24}\label{class_system_1_1system__state_af94f1ac25de0e83601e114e259e73a24}} 
+\index{System::system\_state@{System::system\_state}!energy\_kinetic@{energy\_kinetic}}
+\index{energy\_kinetic@{energy\_kinetic}!System::system\_state@{System::system\_state}}
+\doxysubsubsection{\texorpdfstring{energy\_kinetic}{energy\_kinetic}}
+{\footnotesize\ttfamily std\+::vector$<$double$>$ System\+::system\+\_\+state\+::energy\+\_\+kinetic}
+
+Defines the kinetic energy of each particle type 
+
+Definition at line 24 of file system.\+h.
+
+\mbox{\Hypertarget{class_system_1_1system__state_a40835301e087910ec4bb38e89f2c213f}\label{class_system_1_1system__state_a40835301e087910ec4bb38e89f2c213f}} 
+\index{System::system\_state@{System::system\_state}!energy\_potential@{energy\_potential}}
+\index{energy\_potential@{energy\_potential}!System::system\_state@{System::system\_state}}
+\doxysubsubsection{\texorpdfstring{energy\_potential}{energy\_potential}}
+{\footnotesize\ttfamily double System\+::system\+\_\+state\+::energy\+\_\+potential}
+
+Defines the total potential energy of interaction at this instant 
+
+Definition at line 23 of file system.\+h.
+
+\mbox{\Hypertarget{class_system_1_1system__state_af32ee96b3713e32ec7c0c4fdf9bc674b}\label{class_system_1_1system__state_af32ee96b3713e32ec7c0c4fdf9bc674b}} 
+\index{System::system\_state@{System::system\_state}!energy\_total@{energy\_total}}
+\index{energy\_total@{energy\_total}!System::system\_state@{System::system\_state}}
+\doxysubsubsection{\texorpdfstring{energy\_total}{energy\_total}}
+{\footnotesize\ttfamily double System\+::system\+\_\+state\+::energy\+\_\+total}
+
+Defines the total energy at this instant 
+
+Definition at line 22 of file system.\+h.
+
+\mbox{\Hypertarget{class_system_1_1system__state_ab291424472586d49e51b9bb633ccf8a2}\label{class_system_1_1system__state_ab291424472586d49e51b9bb633ccf8a2}} 
+\index{System::system\_state@{System::system\_state}!orientation@{orientation}}
+\index{orientation@{orientation}!System::system\_state@{System::system\_state}}
+\doxysubsubsection{\texorpdfstring{orientation}{orientation}}
+{\footnotesize\ttfamily std\+::vector$<$std\+::vector$<$std\+::vector$<$double$>$ $>$ $>$ System\+::system\+\_\+state\+::orientation}
+
+Vector of n\+\_\+types X n\+\_\+particles\mbox{[}of each type\mbox{]} X n\+\_\+dimensions size storing orientation of particles 
+
+Definition at line 18 of file system.\+h.
+
+\mbox{\Hypertarget{class_system_1_1system__state_a37bfa6eb6a3e045b58f306d947f159ce}\label{class_system_1_1system__state_a37bfa6eb6a3e045b58f306d947f159ce}} 
+\index{System::system\_state@{System::system\_state}!position@{position}}
+\index{position@{position}!System::system\_state@{System::system\_state}}
+\doxysubsubsection{\texorpdfstring{position}{position}}
+{\footnotesize\ttfamily std\+::vector$<$std\+::vector$<$std\+::vector$<$double$>$ $>$ $>$ System\+::system\+\_\+state\+::position}
+
+Vector of n\+\_\+types X n\+\_\+particles\mbox{[}of each type\mbox{]} X n\+\_\+dimensions size storing positions of particles 
+
+Definition at line 17 of file system.\+h.
+
+\mbox{\Hypertarget{class_system_1_1system__state_a9e7d506fb6a2119b33fbfb7c537aaf04}\label{class_system_1_1system__state_a9e7d506fb6a2119b33fbfb7c537aaf04}} 
+\index{System::system\_state@{System::system\_state}!state@{state}}
+\index{state@{state}!System::system\_state@{System::system\_state}}
+\doxysubsubsection{\texorpdfstring{state}{state}}
+{\footnotesize\ttfamily int System\+::system\+\_\+state\+::state}
+
+
+
+Definition at line 26 of file system.\+h.
+
+\mbox{\Hypertarget{class_system_1_1system__state_a1800108621b05364cb9053c69e3e7fe3}\label{class_system_1_1system__state_a1800108621b05364cb9053c69e3e7fe3}} 
+\index{System::system\_state@{System::system\_state}!temperature@{temperature}}
+\index{temperature@{temperature}!System::system\_state@{System::system\_state}}
+\doxysubsubsection{\texorpdfstring{temperature}{temperature}}
+{\footnotesize\ttfamily std\+::vector$<$double$>$ System\+::system\+\_\+state\+::temperature}
+
+This defines the temperatures of the n\+\_\+types particle sets 
+
+Definition at line 21 of file system.\+h.
+
+\mbox{\Hypertarget{class_system_1_1system__state_a96bd6ddf6ce91b79bf9b1377ed2c8859}\label{class_system_1_1system__state_a96bd6ddf6ce91b79bf9b1377ed2c8859}} 
+\index{System::system\_state@{System::system\_state}!time@{time}}
+\index{time@{time}!System::system\_state@{System::system\_state}}
+\doxysubsubsection{\texorpdfstring{time}{time}}
+{\footnotesize\ttfamily double System\+::system\+\_\+state\+::time}
+
+This is the amount of time passed since the beginning of the simulation 
+
+Definition at line 25 of file system.\+h.
+
+\mbox{\Hypertarget{class_system_1_1system__state_a74405f8207ccb0e85b4eb6cb360d56a5}\label{class_system_1_1system__state_a74405f8207ccb0e85b4eb6cb360d56a5}} 
+\index{System::system\_state@{System::system\_state}!velocity@{velocity}}
+\index{velocity@{velocity}!System::system\_state@{System::system\_state}}
+\doxysubsubsection{\texorpdfstring{velocity}{velocity}}
+{\footnotesize\ttfamily std\+::vector$<$std\+::vector$<$std\+::vector$<$double$>$ $>$ $>$ System\+::system\+\_\+state\+::velocity}
+
+Vector of n\+\_\+types X n\+\_\+particles\mbox{[}of each type\mbox{]} X n\+\_\+dimensions size storing velocity of particles 
+
+Definition at line 19 of file system.\+h.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+Backend/include/\mbox{\hyperlink{system_8h}{system.\+h}}\end{DoxyCompactItemize}

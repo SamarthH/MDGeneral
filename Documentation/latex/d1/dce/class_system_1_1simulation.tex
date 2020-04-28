@@ -1,0 +1,92 @@
+\hypertarget{class_system_1_1simulation}{}\doxysection{System\+::simulation Class Reference}
+\label{class_system_1_1simulation}\index{System::simulation@{System::simulation}}
+
+
+{\ttfamily \#include $<$system.\+h$>$}
+
+Inheritance diagram for System\+::simulation\+:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=1.513514cm]{d1/dce/class_system_1_1simulation}
+\end{center}
+\end{figure}
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{class_system_1_1simulation_a818bbeba72c29862277fa82d12eb134a}{simulation}} (std\+::string input, double size\mbox{[}$\,$\mbox{]})
+\item 
+\mbox{\hyperlink{class_system_1_1simulation_af1c57c400aad78a1eec1b667be86ae70}{$\sim$simulation}} ()
+\end{DoxyCompactItemize}
+\doxysubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+std\+::vector$<$ void($\ast$)(\mbox{\hyperlink{class_system_1_1simulation}{simulation}} \&, int)$>$ \mbox{\hyperlink{class_system_1_1simulation_a4a9342e39a2ebbb16ae5489dc38056de}{thermostat}}
+\item 
+std\+::vector$<$ std\+::vector$<$ void($\ast$)(\mbox{\hyperlink{class_system_1_1simulation}{simulation}} \&, int, int)$>$ $>$ \mbox{\hyperlink{class_system_1_1simulation_a6e8e57c4daca6d81cf46f95465c634c6}{interaction}}
+\item 
+std\+::vector$<$ double $>$ \mbox{\hyperlink{class_system_1_1simulation_a904fa463b533ba0c9653d33d9c85ca21}{box\+\_\+size\+\_\+limits}}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+
+
+Definition at line 183 of file system.\+h.
+
+
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{class_system_1_1simulation_a818bbeba72c29862277fa82d12eb134a}\label{class_system_1_1simulation_a818bbeba72c29862277fa82d12eb134a}} 
+\index{System::simulation@{System::simulation}!simulation@{simulation}}
+\index{simulation@{simulation}!System::simulation@{System::simulation}}
+\doxysubsubsection{\texorpdfstring{simulation()}{simulation()}}
+{\footnotesize\ttfamily System\+::simulation\+::simulation (\begin{DoxyParamCaption}\item[{std\+::string}]{input,  }\item[{double}]{size\mbox{[}$\,$\mbox{]} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line 190 of file system.\+h.
+
+\mbox{\Hypertarget{class_system_1_1simulation_af1c57c400aad78a1eec1b667be86ae70}\label{class_system_1_1simulation_af1c57c400aad78a1eec1b667be86ae70}} 
+\index{System::simulation@{System::simulation}!````~simulation@{$\sim$simulation}}
+\index{````~simulation@{$\sim$simulation}!System::simulation@{System::simulation}}
+\doxysubsubsection{\texorpdfstring{$\sim$simulation()}{~simulation()}}
+{\footnotesize\ttfamily System\+::simulation\+::$\sim$simulation (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+\doxysubsection{Member Data Documentation}
+\mbox{\Hypertarget{class_system_1_1simulation_a904fa463b533ba0c9653d33d9c85ca21}\label{class_system_1_1simulation_a904fa463b533ba0c9653d33d9c85ca21}} 
+\index{System::simulation@{System::simulation}!box\_size\_limits@{box\_size\_limits}}
+\index{box\_size\_limits@{box\_size\_limits}!System::simulation@{System::simulation}}
+\doxysubsubsection{\texorpdfstring{box\_size\_limits}{box\_size\_limits}}
+{\footnotesize\ttfamily std\+::vector$<$double$>$ System\+::simulation\+::box\+\_\+size\+\_\+limits}
+
+We assume that the initial limits are all (0,0,0,...,0) to whatever the limits define for a box (allocate to n\+\_\+dimensions size) 
+
+Definition at line 188 of file system.\+h.
+
+\mbox{\Hypertarget{class_system_1_1simulation_a6e8e57c4daca6d81cf46f95465c634c6}\label{class_system_1_1simulation_a6e8e57c4daca6d81cf46f95465c634c6}} 
+\index{System::simulation@{System::simulation}!interaction@{interaction}}
+\index{interaction@{interaction}!System::simulation@{System::simulation}}
+\doxysubsubsection{\texorpdfstring{interaction}{interaction}}
+{\footnotesize\ttfamily std\+::vector$<$std\+::vector$<$void ($\ast$)(\mbox{\hyperlink{class_system_1_1simulation}{simulation}}\&, int, int)$>$ $>$ System\+::simulation\+::interaction}
+
+This defines the set of functions for interaction between different particle types. Also allows for non-\/symmetric interaction. 
+
+Definition at line 187 of file system.\+h.
+
+\mbox{\Hypertarget{class_system_1_1simulation_a4a9342e39a2ebbb16ae5489dc38056de}\label{class_system_1_1simulation_a4a9342e39a2ebbb16ae5489dc38056de}} 
+\index{System::simulation@{System::simulation}!thermostat@{thermostat}}
+\index{thermostat@{thermostat}!System::simulation@{System::simulation}}
+\doxysubsubsection{\texorpdfstring{thermostat}{thermostat}}
+{\footnotesize\ttfamily std\+::vector$<$void ($\ast$)(\mbox{\hyperlink{class_system_1_1simulation}{simulation}}\&, int)$>$ System\+::simulation\+::thermostat}
+
+This stores thermostats for different particle sets 
+
+Definition at line 186 of file system.\+h.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+Backend/include/\mbox{\hyperlink{system_8h}{system.\+h}}\end{DoxyCompactItemize}

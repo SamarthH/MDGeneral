@@ -1,3 +1,4 @@
+/** @file */ 
 #ifndef SYSTEM_H
 #define SYSTEM_H 
 
@@ -13,15 +14,15 @@ namespace System{
 	class system_state
 	{
 	public:
-		std::vector<std::vector<std::vector<double>>> position; //Needs to be allocated to have n_types X n_particles X n_dimensions size
-		std::vector<std::vector<std::vector<double>>> orientation; //Needs to be allocated to have n_types X n_particles X n_dimensions size
-		std::vector<std::vector<std::vector<double>>> velocity; //Needs to be allocated to have n_types X n_particles X n_dimensions sizes
-		std::vector<std::vector<std::vector<double>>> acceleration; //Needs to be allocated to have n_types X n_particles X n_dimensions sizes
-		std::vector<double> temperature; // This defines the temperatures of the n_types particle sets
-		double energy_total; //Defines the total energy at this instant
-		double energy_potential; //Defines the total potential energy of interaction at this instant
-		std::vector<double> energy_kinetic; //Defines the kinetic energy of each particle type
-		double time;
+		std::vector<std::vector<std::vector<double>>> position; /**< Vector of n_types X n_particles[of each type] X n_dimensions size storing positions of particles */
+		std::vector<std::vector<std::vector<double>>> orientation; /**< Vector of n_types X n_particles[of each type] X n_dimensions size storing orientation of particles */
+		std::vector<std::vector<std::vector<double>>> velocity; /**< Vector of n_types X n_particles[of each type] X n_dimensions size storing velocity of particles */
+		std::vector<std::vector<std::vector<double>>> acceleration; /**< Vector of n_types X n_particles[of each type] X n_dimensions size storing accelerations of particles */
+		std::vector<double> temperature; /**< This defines the temperatures of the n_types particle sets */
+		double energy_total; /**< Defines the total energy at this instant */
+		double energy_potential; /**< Defines the total potential energy of interaction at this instant */
+		std::vector<double> energy_kinetic; /**< Defines the kinetic energy of each particle type */
+		double time; /**< This is the amount of time passed since the beginning of the simulation */
 		int state;
 		system_state(int n_types, int n_dimensions, std::vector<int>& n_particles){
 			//Allocating (reserving) system_state variables
@@ -64,15 +65,15 @@ namespace System{
 	class input_params
 	{
 	public:
-		int n_types; //This represents the number of types of particles
-		int n_dimensions; //This represents the number of dimensions of the simulation (by default must be 3)
-		std::vector<int> n_particles; //This represents the number of particles of each type (n_types sized)
-		double timestep;
-		double runtime;
-		int parallelize; // If 1, parallelize. Else, do not parallelize.
-		std::vector<double> mass; //This represents the mass of each type of particle (n_types sized)
-		std::vector<double> temperature_required; //This is the vector of the temperatures required to be mainted for each particle type by the thermostat.
-		int periodic_boundary; //Use periodic boundary conditions if 1. If 0, use rigid walls.
+		int n_types; ///< This represents the number of types of particles
+		int n_dimensions; ///< This represents the number of dimensions of the simulation (by default must be 3)
+		std::vector<int> n_particles; ///< This represents the number of particles of each type (n_types sized)
+		double timestep; ///< This defines the size of each timestep (dt)
+		double runtime; ///< This defines the time for which to run the simulation
+		int parallelize; ///< If 1, parallelize. Else, do not parallelize.
+		std::vector<double> mass; ///< This represents the mass of each type of particle (n_types sized)
+		std::vector<double> temperature_required; ///< This is the vector of the temperatures required to be mainted for each particle type by the thermostat.
+		int periodic_boundary; ///< Use periodic boundary conditions if 1. If 0, use rigid walls.
 		
 		input_params(std::string input){
 			std::vector<int> input_vector;
@@ -110,11 +111,24 @@ namespace System{
 	class constants_interaction
 	{
 	public:
+		/**
+		 *  \brief Stores the constants of interaction for all the interactions between particles.
+		 *
+		 *  Stores the constants of interaction for all the interactions between particles. For interaction of particles of type1 and type2 the constants are stored in vector interaction_const[type1][type2] \n
+		   If the interaction is of the Lennard Jones type, \n
+		   interaction_const[i][j][0] = $\epsilon$ \n
+		   interaction_const[i][j][1] = $\sigma$ \n
+		   interaction_const[i][j][2] = Cutoff radius/distance (r_cut) \n
+		   interaction_const[i][j][3] = Truncated Potential (etrunc) \n
+		   interaction_const[i][j][4] = $\sigma^6$ \n
+		   interaction_const[i][j][5] = Tail Energy (assuming constant distribution outside cutoff radius) \n
+		*/
 		std::vector<std::vector<std::vector<double>>> interaction_const;
+
 
 		// Parametrized Constructor
 
-		constants_interaction(int n_types)
+		constants_interaction(int n_types /** Number of types of particles */)
 		{
 			try{
 				interaction_const.reserve(n_types);
@@ -169,9 +183,9 @@ namespace System{
 	class simulation : public input_params, public system_state, public constants_interaction, public constants_thermostat
 	{
 	public:
-		std::vector<void (*)(simulation&, int)> thermostat; //This stores thermostats for different particle sets
-		std::vector<std::vector<void (*)(simulation&, int, int)>> interaction; //This defines the set of functions for interaction between different particle types. Also allows for non-symmetric interaction.
-		std::vector<double> box_size_limits; // We assume that the initial limits are all (0,0,0,...,0) to whatever the limits define for a box (allocate to n_dimensions size)
+		std::vector<void (*)(simulation&, int)> thermostat; /**< This stores thermostats for different particle sets */
+		std::vector<std::vector<void (*)(simulation&, int, int)>> interaction; /**< This defines the set of functions for interaction between different particle types. Also allows for non-symmetric interaction.*/
+		std::vector<double> box_size_limits; /**< We assume that the initial limits are all (0,0,0,...,0) to whatever the limits define for a box (allocate to n_dimensions size) */
 
 		simulation(std::string input, double size[]):input_params(input), system_state(n_types,n_dimensions,n_particles), constants_interaction(n_types), constants_thermostat(n_types)
 		{

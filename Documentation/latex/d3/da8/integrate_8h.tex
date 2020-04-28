@@ -1,0 +1,52 @@
+\hypertarget{integrate_8h}{}\doxysection{Backend/include/integrate.h File Reference}
+\label{integrate_8h}\index{Backend/include/integrate.h@{Backend/include/integrate.h}}
+{\ttfamily \#include $<$cmath$>$}\newline
+{\ttfamily \#include $<$algorithm$>$}\newline
+{\ttfamily \#include \char`\"{}system.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}constants.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}interaction.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}thermostat.\+h\char`\"{}}\newline
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{integrate_8h_a99d4438b2a5673d1294f6e54ba3e61e0}{integrate\+\_\+verdet\+\_\+periodic}} (\mbox{\hyperlink{class_system_1_1simulation}{System\+::simulation}} \&sim)
+\item 
+void \mbox{\hyperlink{integrate_8h_a4649b8bbb1d8e5cbee942c03c33f3e83}{integrate\+\_\+verdet\+\_\+box}} (\mbox{\hyperlink{class_system_1_1simulation}{System\+::simulation}} \&sim)
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Function Documentation}
+\mbox{\Hypertarget{integrate_8h_a4649b8bbb1d8e5cbee942c03c33f3e83}\label{integrate_8h_a4649b8bbb1d8e5cbee942c03c33f3e83}} 
+\index{integrate.h@{integrate.h}!integrate\_verdet\_box@{integrate\_verdet\_box}}
+\index{integrate\_verdet\_box@{integrate\_verdet\_box}!integrate.h@{integrate.h}}
+\doxysubsubsection{\texorpdfstring{integrate\_verdet\_box()}{integrate\_verdet\_box()}}
+{\footnotesize\ttfamily void integrate\+\_\+verdet\+\_\+box (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{class_system_1_1simulation}{System\+::simulation}} \&}]{sim }\end{DoxyParamCaption})}
+
+This function integrates the equation of motion for rigid box conditions This function integrates using the Leapfrog Algorithm
+
+
+\begin{DoxyParams}{Parameters}
+{\em sim} & Simulation being integrated over \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 62 of file integrate.\+cpp.
+
+\mbox{\Hypertarget{integrate_8h_a99d4438b2a5673d1294f6e54ba3e61e0}\label{integrate_8h_a99d4438b2a5673d1294f6e54ba3e61e0}} 
+\index{integrate.h@{integrate.h}!integrate\_verdet\_periodic@{integrate\_verdet\_periodic}}
+\index{integrate\_verdet\_periodic@{integrate\_verdet\_periodic}!integrate.h@{integrate.h}}
+\doxysubsubsection{\texorpdfstring{integrate\_verdet\_periodic()}{integrate\_verdet\_periodic()}}
+{\footnotesize\ttfamily void integrate\+\_\+verdet\+\_\+periodic (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{class_system_1_1simulation}{System\+::simulation}} \&}]{sim }\end{DoxyParamCaption})}
+
+This function integrates the equation of motion for periodic boundary conditions This function integrates using the Leapfrog Algorithm
+
+
+\begin{DoxyParams}{Parameters}
+{\em sim} & Simulation being integrated over \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 10 of file integrate.\+cpp.
+

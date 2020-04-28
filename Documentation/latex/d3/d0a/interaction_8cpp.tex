@@ -1,0 +1,173 @@
+\hypertarget{interaction_8cpp}{}\doxysection{Backend/src/interaction.cpp File Reference}
+\label{interaction_8cpp}\index{Backend/src/interaction.cpp@{Backend/src/interaction.cpp}}
+{\ttfamily \#include $<$iostream$>$}\newline
+{\ttfamily \#include $<$cstdio$>$}\newline
+{\ttfamily \#include $<$cstdlib$>$}\newline
+{\ttfamily \#include $<$cmath$>$}\newline
+{\ttfamily \#include $<$algorithm$>$}\newline
+{\ttfamily \#include \char`\"{}universal\+\_\+functions.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}interaction.\+h\char`\"{}}\newline
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{interaction_8cpp_aae6823e66c76a6b0ca9268b91227e8dc}{initialize\+\_\+interactions}} (\mbox{\hyperlink{class_system_1_1simulation}{System\+::simulation}} \&sim)
+\begin{DoxyCompactList}\small\item\em Initializes the constant arrays for interactions for speed. \end{DoxyCompactList}\item 
+double \mbox{\hyperlink{interaction_8cpp_a096475b5005653337a80e155bf2fec93}{distance\+\_\+periodic}} (\mbox{\hyperlink{class_system_1_1simulation}{System\+::simulation}} \&sim, int type1, int n1, int type2, int n2)
+\begin{DoxyCompactList}\small\item\em Returns the distance between two particles for periodic boundary conditions. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{interaction_8cpp_adddab42b9bd10bd98a83f3c7536a2150}{interact}} (\mbox{\hyperlink{class_system_1_1simulation}{System\+::simulation}} \&sim)
+\begin{DoxyCompactList}\small\item\em This function calls all the required interaction functions between the particles. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{interaction_8cpp_ac1358438f8242606c7a8fa6c94aea741}{free\+\_\+particles}} (\mbox{\hyperlink{class_system_1_1simulation}{System\+::simulation}} \&sim, int type1, int type2)
+\begin{DoxyCompactList}\small\item\em Setup the free particle interaction between two particle types. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{interaction_8cpp_a7ecacd009a578a179d5c41c864ae5111}{lj\+\_\+periodic}} (\mbox{\hyperlink{class_system_1_1simulation}{System\+::simulation}} \&sim, int type1, int type2)
+\begin{DoxyCompactList}\small\item\em Setup the Lennard-\/\+Jones potential for periodic boundary conditions between two particle types. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{interaction_8cpp_a217547f6058ee1d7b66c8eda61b88566}{lj\+\_\+box}} (\mbox{\hyperlink{class_system_1_1simulation}{System\+::simulation}} \&sim, int type1, int type2)
+\begin{DoxyCompactList}\small\item\em Setup the Lennard-\/\+Jones potential for rigid box boundary conditions between two particle types. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Function Documentation}
+\mbox{\Hypertarget{interaction_8cpp_a096475b5005653337a80e155bf2fec93}\label{interaction_8cpp_a096475b5005653337a80e155bf2fec93}} 
+\index{interaction.cpp@{interaction.cpp}!distance\_periodic@{distance\_periodic}}
+\index{distance\_periodic@{distance\_periodic}!interaction.cpp@{interaction.cpp}}
+\doxysubsubsection{\texorpdfstring{distance\_periodic()}{distance\_periodic()}}
+{\footnotesize\ttfamily double distance\+\_\+periodic (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{class_system_1_1simulation}{System\+::simulation}} \&}]{sim,  }\item[{int}]{type1,  }\item[{int}]{n1,  }\item[{int}]{type2,  }\item[{int}]{n2 }\end{DoxyParamCaption})}
+
+
+
+Returns the distance between two particles for periodic boundary conditions. 
+
+Returns the distance between two particles labelled number n1,n2 of type1,type2 respectively in the position array assuming periodic boundary conditions
+
+
+\begin{DoxyParams}{Parameters}
+{\em sim} & Simulation being used \\
+\hline
+{\em type1} & Particle type of particle 1 \\
+\hline
+{\em type2} & Particle type of particle 2 \\
+\hline
+{\em n1} & Particle index of particle 1 in position\mbox{[}type1\mbox{]} array \\
+\hline
+{\em n2} & Particle index of particle 2 in position\mbox{[}type2\mbox{]} array \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 67 of file interaction.\+cpp.
+
+\mbox{\Hypertarget{interaction_8cpp_ac1358438f8242606c7a8fa6c94aea741}\label{interaction_8cpp_ac1358438f8242606c7a8fa6c94aea741}} 
+\index{interaction.cpp@{interaction.cpp}!free\_particles@{free\_particles}}
+\index{free\_particles@{free\_particles}!interaction.cpp@{interaction.cpp}}
+\doxysubsubsection{\texorpdfstring{free\_particles()}{free\_particles()}}
+{\footnotesize\ttfamily void free\+\_\+particles (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{class_system_1_1simulation}{System\+::simulation}} \&}]{sim,  }\item[{int}]{type1,  }\item[{int}]{type2 }\end{DoxyParamCaption})}
+
+
+
+Setup the free particle interaction between two particle types. 
+
+Setup of free particle interaction between particle types type1 and type2. This does nothing. The function is empty.
+
+
+\begin{DoxyParams}{Parameters}
+{\em sim} & Simulation being used \\
+\hline
+{\em type1} & First type of particle interacting \\
+\hline
+{\em type2} & Second type of particle interacting \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 124 of file interaction.\+cpp.
+
+\mbox{\Hypertarget{interaction_8cpp_aae6823e66c76a6b0ca9268b91227e8dc}\label{interaction_8cpp_aae6823e66c76a6b0ca9268b91227e8dc}} 
+\index{interaction.cpp@{interaction.cpp}!initialize\_interactions@{initialize\_interactions}}
+\index{initialize\_interactions@{initialize\_interactions}!interaction.cpp@{interaction.cpp}}
+\doxysubsubsection{\texorpdfstring{initialize\_interactions()}{initialize\_interactions()}}
+{\footnotesize\ttfamily void initialize\+\_\+interactions (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{class_system_1_1simulation}{System\+::simulation}} \&}]{sim }\end{DoxyParamCaption})}
+
+
+
+Initializes the constant arrays for interactions for speed. 
+
+The function initializes the arrays for more efficient computation by precomputing the required factors
+
+
+\begin{DoxyParams}{Parameters}
+{\em sim} & Simulation being initialized \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 17 of file interaction.\+cpp.
+
+\mbox{\Hypertarget{interaction_8cpp_adddab42b9bd10bd98a83f3c7536a2150}\label{interaction_8cpp_adddab42b9bd10bd98a83f3c7536a2150}} 
+\index{interaction.cpp@{interaction.cpp}!interact@{interact}}
+\index{interact@{interact}!interaction.cpp@{interaction.cpp}}
+\doxysubsubsection{\texorpdfstring{interact()}{interact()}}
+{\footnotesize\ttfamily void interact (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{class_system_1_1simulation}{System\+::simulation}} \&}]{sim }\end{DoxyParamCaption})}
+
+
+
+This function calls all the required interaction functions between the particles. 
+
+Calls all the interactiosn and updates acceleration and energy arrays
+
+
+\begin{DoxyParams}{Parameters}
+{\em sim} & Simulation being used \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 87 of file interaction.\+cpp.
+
+\mbox{\Hypertarget{interaction_8cpp_a217547f6058ee1d7b66c8eda61b88566}\label{interaction_8cpp_a217547f6058ee1d7b66c8eda61b88566}} 
+\index{interaction.cpp@{interaction.cpp}!lj\_box@{lj\_box}}
+\index{lj\_box@{lj\_box}!interaction.cpp@{interaction.cpp}}
+\doxysubsubsection{\texorpdfstring{lj\_box()}{lj\_box()}}
+{\footnotesize\ttfamily void lj\+\_\+box (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{class_system_1_1simulation}{System\+::simulation}} \&}]{sim,  }\item[{int}]{type1,  }\item[{int}]{type2 }\end{DoxyParamCaption})}
+
+
+
+Setup the Lennard-\/\+Jones potential for rigid box boundary conditions between two particle types. 
+
+Setup of Lennard-\/\+Jones potential for rigid box boundary conditions between particle types type1 and type2.
+
+
+\begin{DoxyParams}{Parameters}
+{\em sim} & Simulation being used \\
+\hline
+{\em type1} & First type of particle interacting \\
+\hline
+{\em type2} & Second type of particle interacting \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 216 of file interaction.\+cpp.
+
+\mbox{\Hypertarget{interaction_8cpp_a7ecacd009a578a179d5c41c864ae5111}\label{interaction_8cpp_a7ecacd009a578a179d5c41c864ae5111}} 
+\index{interaction.cpp@{interaction.cpp}!lj\_periodic@{lj\_periodic}}
+\index{lj\_periodic@{lj\_periodic}!interaction.cpp@{interaction.cpp}}
+\doxysubsubsection{\texorpdfstring{lj\_periodic()}{lj\_periodic()}}
+{\footnotesize\ttfamily void lj\+\_\+periodic (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{class_system_1_1simulation}{System\+::simulation}} \&}]{sim,  }\item[{int}]{type1,  }\item[{int}]{type2 }\end{DoxyParamCaption})}
+
+
+
+Setup the Lennard-\/\+Jones potential for periodic boundary conditions between two particle types. 
+
+Setup of Lennard-\/\+Jones potential for periodic boundary conditions between particle types type1 and type2. This requires the cutoff $<$= half the box size because it only checks the nearest images.
+
+
+\begin{DoxyParams}{Parameters}
+{\em sim} & Simulation being used \\
+\hline
+{\em type1} & First type of particle interacting \\
+\hline
+{\em type2} & Second type of particle interacting \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line 139 of file interaction.\+cpp.
+
