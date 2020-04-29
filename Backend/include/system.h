@@ -24,6 +24,7 @@ namespace System{
 		std::vector<double> energy_kinetic; /**< Defines the kinetic energy of each particle type */
 		double time; /**< This is the amount of time passed since the beginning of the simulation */
 		int state;
+		int numpartot;///< Total number of particles
 		system_state(int n_types, int n_dimensions, std::vector<int>& n_particles){
 			//Allocating (reserving) system_state variables
 			try{
@@ -40,6 +41,8 @@ namespace System{
 					velocity[i].reserve(n_particles[i]);
 					orientation[i].reserve(n_particles[i]);
 					acceleration[i].reserve(n_particles[i]);
+
+					numpartot += n_particles[i];
 
 					for (int j = 0; j < n_particles[i]; ++j)
 					{
@@ -150,7 +153,6 @@ namespace System{
 				exit(0002);
 			}
 		}
-
 	};
 
 	class constants_thermostat
@@ -180,14 +182,78 @@ namespace System{
 		}
 	};
 
-	class simulation : public input_params, public system_state, public constants_interaction, public constants_thermostat
+	class correlation
+	{
+	public:
+		std::vector<std::vector<std::vector<double>>> velocity_initial; ///< Stores the velocity of the particles at t=0
+		std::vector<std::vector<double>> correlation_velocity; /**< Stores the velocity correlation for each particle type at each timestep (the n_types+1 th entry is the correlation over all types) \n The format is correlation_velocity[step_number][particletype]*/
+
+		/**********************************************
+		 * This constructor reserves space for the correlation arrays and initial conditions
+		 */
+		correlation(int n_types, int n_dimensions, std::vector<int>& n_particles, double runtime, double timestep)
+		{
+			// Reserving for initial arrays
+
+			try
+			{
+				velocity_initial.reserve(n_types);
+
+				for (int i = 0; i < n_types; ++i)
+				{
+					velocity_initial[i].reserve(n_particles[i]);
+
+					for (int j = 0; j < n_particles[i]; ++j)
+					{
+						velocity_initial[i][j].reserve(n_dimensions);
+					}
+				}
+			}
+			catch(const std::length_error& le){
+				std::cerr<<"Error 0001"<<std::endl; 
+				exit(0001);
+			}
+			catch(const std::bad_alloc& ba){
+				std::cerr<<"Error 0002"<<std::endl;
+				exit(0002);
+			}
+			// Done
+
+
+			int n_steps = (int)(runtime/timestep);
+			//Reserving for correlations
+
+			try
+			{
+				correlation_velocity.reserve(n_steps);
+
+				for (int i = 0; i < n_steps; ++i)
+				{
+					correlation_velocity[i].reserve(n_types+1);
+				}
+			}
+			catch(const std::length_error& le){
+				std::cerr<<"Error 0001"<<std::endl; 
+				exit(0001);
+			}
+			catch(const std::bad_alloc& ba){
+				std::cerr<<"Error 0002"<<std::endl;
+				exit(0002);
+			}
+			//Done
+		}
+		~correlation();
+		
+	};
+
+	class simulation : public input_params, public system_state, public constants_interaction, public constants_thermostat, public correlation
 	{
 	public:
 		std::vector<void (*)(simulation&, int)> thermostat; /**< This stores thermostats for different particle sets */
 		std::vector<std::vector<void (*)(simulation&, int, int)>> interaction; /**< This defines the set of functions for interaction between different particle types. Also allows for non-symmetric interaction.*/
 		std::vector<double> box_size_limits; /**< We assume that the initial limits are all (0,0,0,...,0) to whatever the limits define for a box (allocate to n_dimensions size) */
 
-		simulation(std::string input, double size[]):input_params(input), system_state(n_types,n_dimensions,n_particles), constants_interaction(n_types), constants_thermostat(n_types)
+		simulation(std::string input, double size[]):input_params(input), system_state(n_types,n_dimensions,n_particles), constants_interaction(n_types), constants_thermostat(n_types), correlation(n_types,n_dimensions,n_particles,runtime,timestep)
 		{
 
 			//Please check here @Sweptile
