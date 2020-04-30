@@ -1,5 +1,5 @@
 #include"initialize.h"
-#include <trng/yarn2.hpp>
+#include <trng/yarn5s.hpp>
 #include <trng/uniform01_dist.hpp>
 
 void init_sim(System::simulation& sim)

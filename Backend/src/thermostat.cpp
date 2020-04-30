@@ -1,5 +1,5 @@
 #include "thermostat.h"
-#include "trng/yarn2.hpp"
+#include "trng/yarn5.hpp"
 #include "trng/normal_dist.hpp"
 #include "trng/uniform01_dist.hpp"
 
