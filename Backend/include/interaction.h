@@ -52,7 +52,18 @@ void free_particles(System::simulation& sim,int type1,int type2);
  * \brief Setup the Lennard-Jones potential for periodic boundary conditions between two particle types
  * 
  * Setup of Lennard-Jones potential for periodic boundary conditions between particle types type1 and type2.
- * This requires the cutoff <= half the box size because it only checks the nearest images.
+ * This requires the cutoff <= half the box size because it only checks the nearest images. \n
+ * \n
+ * Potential : \f[ U(r) = 4\epsilon*[(\frac{\sigma}{r})^12 - (\frac{\sigma}{r})^6] - U(r_cut) \f] \n
+ * Force : \f[ F(r) = 24\epsilon*\frac{\sigma^6}{r^7}*[2(\frac{\sigma}{r})^6 - 1] \vu{r} \f] \n
+ * Here, the constants vector is as follows: \n
+ * interaction_const[i][j][0] = \f$ \epsilon \f$ \n
+ * interaction_const[i][j][1] = \f$ \sigma \f$ \n
+ * interaction_const[i][j][2] = Cutoff radius/distance (r_cut) \n
+ * interaction_const[i][j][3] = Truncated Potential (etrunc) \n
+ * interaction_const[i][j][4] = \f$ \sigma^6 \f$ \n
+ * interaction_const[i][j][5] = Tail Energy (assuming constant distribution outside cutoff radius) \n
+ * \n
  *
  * @param sim Simulation being used
  * @param type1 First type of particle interacting
@@ -63,7 +74,18 @@ void lj_periodic(System::simulation& sim,int type1,int type2);
 /*******************************************************************************
  * \brief Setup the Lennard-Jones potential for rigid box boundary conditions between two particle types
  * 
- * Setup of Lennard-Jones potential for rigid box boundary conditions between particle types type1 and type2.
+ * Setup of Lennard-Jones potential for rigid box boundary conditions between particle types type1 and type2. \n
+ * \n
+ * Potential : \f[ U(r) = 4\epsilon*[(\frac{\sigma}{r})^12 - (\frac{\sigma}{r})^6] - U(r_cut) \f] \n
+ * Force : \f[ F(r) = 24\epsilon*\frac{\sigma^6}{r^7}*[2(\frac{\sigma}{r})^6 - 1] \vu{r} \f] \n
+ * Here, the constants vector is as follows: \n
+ * interaction_const[i][j][0] = \f$ \epsilon \f$ \n
+ * interaction_const[i][j][1] = \f$ \sigma \f$ \n
+ * interaction_const[i][j][2] = Cutoff radius/distance (r_cut) \n
+ * interaction_const[i][j][3] = Truncated Potential (etrunc) \n
+ * interaction_const[i][j][4] = \f$ \sigma^6 \f$ \n
+ * interaction_const[i][j][5] = Tail Energy (assuming constant distribution outside cutoff radius) \n
+ * \n
  *
  * @param sim Simulation being used
  * @param type1 First type of particle interacting

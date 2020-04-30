@@ -253,6 +253,7 @@ namespace System{
 		std::vector<std::vector<void (*)(simulation&, int, int)>> interaction; /**< This defines the set of functions for interaction between different particle types. Also allows for non-symmetric interaction.*/
 		std::vector<double> box_size_limits; /**< We assume that the initial limits are all (0,0,0,...,0) to whatever the limits define for a box (allocate to n_dimensions size) */
 		int total_steps; ///< Total number of steps to be taken
+		std::vector<int> dof; ///< This stores the number of degrees of freedom for each molecule/particle type.
 
 		simulation(std::string input, double size[]):input_params(input), system_state(n_types,n_dimensions,n_particles), constants_interaction(n_types), constants_thermostat(n_types), correlation(n_types,n_dimensions,n_particles,runtime,timestep)
 		{
@@ -293,6 +294,24 @@ namespace System{
 			catch(const std::bad_alloc& ba){
 				std::cerr<<"Error 0002"<<std::endl;
 				exit(0002);
+			}
+			//Done
+
+			//Allocating and defining dof
+			try{
+				dof.reserve(n_types);
+			}
+			catch(const std::length_error& le){
+				std::cerr<<"Error 0001"<<std::endl; 
+				exit(0001);
+			}
+			catch(const std::bad_alloc& ba){
+				std::cerr<<"Error 0002"<<std::endl;
+				exit(0002);
+			}
+			for (int i = 0; i < n_types; ++i)
+			{
+				dof[i] = n_dimensions;
 			}
 			//Done
 		};
