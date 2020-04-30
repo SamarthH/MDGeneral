@@ -10,7 +10,7 @@ void integrate_verdet_periodic(simulation* sim){
 		for (int j = 0; j < (*sim).n_particles[i]; ++j)
 		{
 			#pragma omp parallel for
-			for (int k = 0; k < n_dimensions; ++k)
+			for (int k = 0; k < (*sim).n_dimensions; ++k)
 			{
 				(*sim).position[i][j][k] += dt*(*sim).velocity[i][j][k] + 0.5*dt*dt*(*sim).acceleration[i][j][k];
 				(*sim).position[i][j][k] -= (*sim).box_size_limits[k]*std::floor((*sim).position[i][j][k]/(*sim).box_size_limits[k]);
@@ -21,7 +21,6 @@ void integrate_verdet_periodic(simulation* sim){
 	//Done with first part of thermostat
 	//Calling interaction
 	(*sim).energy_potential = 0;
-	interact(sim);
 	//Done
 	//Starting second part of thermostat
 	for (int i = 0; i < (*sim).n_types; ++i)
@@ -31,7 +30,7 @@ void integrate_verdet_periodic(simulation* sim){
 		for (int j = 0; j < (*sim).n_particles[i]; ++j)
 		{
 			#pragma omp parallel for
-			for (int k = 0; k < n_dimensions; ++k)
+			for (int k = 0; k < (*sim).n_dimensions; ++k)
 			{
 				(*sim).velocity[i][j][k] += dt*(*sim).acceleration[i][j][k]/2;
 				#pragma omp atomic
@@ -41,14 +40,13 @@ void integrate_verdet_periodic(simulation* sim){
 			}
 		}
 		(*sim).energy_kinetic[i] *= (*sim).mass[i];
-		(*sim).temperature[i] = (*sim).energy_kinetic[i]/((*sim).n_dimensions*(*sim).n_particles*BOLTZ_SI);
+		(*sim).temperature[i] = (*sim).energy_kinetic[i]/(((*sim).n_dimensions) * ((*sim).n_particles[i])*BOLTZ_SI);
 		(*sim).energy_total += (*sim).energy_kinetic[i];
 	}
-	call_thermostat(sim);
 	(*sim).time+= dt;
 }
 
-void integrate_verdet_box((*sim)ulation* sim){
+void integrate_verdet_box(simulation* sim){
 	double dt = (*sim).timestep;
 	(*sim).energy_total = (*sim).energy_potential;
 	for (int i = 0; i < (*sim).n_types; ++i)
@@ -58,7 +56,7 @@ void integrate_verdet_box((*sim)ulation* sim){
 		for (int j = 0; j < (*sim).n_particles[i]; ++j)
 		{
 			#pragma omp parallel for
-			for (int k = 0; k < n_dimensions; ++k)
+			for (int k = 0; k < (*sim).n_dimensions; ++k)
 			{
 				(*sim).position[i][j][k] += dt*(*sim).velocity[i][j][k] + 0.5*dt*dt*(*sim).acceleration[i][j][k];
 				(*sim).velocity[i][j][k] += dt*(*sim).acceleration[i][j][k];
@@ -80,7 +78,7 @@ void integrate_verdet_box((*sim)ulation* sim){
 			}
 		}
 		(*sim).energy_kinetic[i] *= (*sim).mass[i];
-		(*sim).temperature[i] = (*sim).energy_kinetic[i]/((*sim).n_dimensions*(*sim).n_particles*BOLTZ_SI);
+		(*sim).temperature[i] = (*sim).energy_kinetic[i]/(((*sim).n_dimensions)*((*sim).n_particles[])*BOLTZ_SI);
 		(*sim).energy_total += (*sim).energy_kinetic[i];
 	}
 	(*sim).time+=dt;
