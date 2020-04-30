@@ -24,13 +24,11 @@ void anderson(System::simulation& sim, int type){
 	{
 		for (int k = 0; k < sim.n_dimensions; ++k)
 		{
-			trng::yarn2 R1,R2;
+			trng::yarn5 R;
 
-			R1.split(sim.n_types,type);
-			R2.split(sim.n_types,type);
+			R.split(sim.total_steps,sim.state);
 
-			R1.split(2,0);
-			R2.split(2,1);
+			R.split(sim.n_types,type);
 			
 			trng::uniform01_dist<> unif;
 			trng::normal_dist<> norm(0,stdev_boltzman);
@@ -38,11 +36,10 @@ void anderson(System::simulation& sim, int type){
 			int size = omp_get_num_threads();
 			int rank = omp_get_thread_num();
 
-			R1.split(size,rank);
-			R2.split(size,rank);
+			R.split(size,rank);
 
-			if(unif(R1) <= sim.thermostat_const[j][0]*(sim.timestep)){
-				sim.velocity[type][j][k] = norm(R2);
+			if(unif(R) <= sim.thermostat_const[j][0]*(sim.timestep)){
+				sim.velocity[type][j][k] = norm(R);
 			}
 		}
 	}

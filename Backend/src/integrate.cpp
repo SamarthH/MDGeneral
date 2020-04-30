@@ -11,9 +11,10 @@ void integrate_verdet_periodic(System::simulation& sim){
 	double dt = sim.timestep;
 	sim.energy_total = sim.energy_potential;
 	//Starting first part of thermostat
+	#pragma omp target teams distribute parallel for
 	for (int i = 0; i < sim.n_types; ++i)
 	{
-		#pragma omp target teams distribute parallel for
+		#pragma omp parallel for
 		for (int j = 0; j < sim.n_particles[i]; ++j)
 		{
 			#pragma omp parallel for
@@ -31,10 +32,11 @@ void integrate_verdet_periodic(System::simulation& sim){
 	interact(sim);
 	//Done
 	//Starting second part of thermostat
+	#pragma omp target teams distribute parallel for
 	for (int i = 0; i < sim.n_types; ++i)
 	{
 		sim.energy_kinetic[i] = 0;
-		#pragma omp target teams distribute parallel for
+		#pragma omp parallel for
 		for (int j = 0; j < sim.n_particles[i]; ++j)
 		{
 			#pragma omp parallel for
@@ -49,8 +51,8 @@ void integrate_verdet_periodic(System::simulation& sim){
 		sim.temperature[i] = sim.energy_kinetic[i]/(sim.n_particles[i]*BOLTZ_SI*sim.n_dimensions);
 		sim.energy_total += sim.energy_kinetic[i];
 	}
-	call_thermostat(sim);
 	sim.time+= dt;
+	sim.state++;
 }
 
 /*******************************************************************************
@@ -93,4 +95,5 @@ void integrate_verdet_box(System::simulation& sim){
 		sim.energy_total += sim.energy_kinetic[i];
 	}
 	sim.time+=dt;
+	sim.state++;
 }

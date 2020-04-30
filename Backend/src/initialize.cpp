@@ -23,7 +23,7 @@ void init_sim(System::simulation& sim)
             #pragma omp parallel for
             for(int k = 0; k < sim.n_dimensions;++k)
             {
-                trng::yarn2 R;
+                trng::yarn5s R;
 
                 int size = omp_get_num_threads();
                 int rank = omp_get_thread_num();

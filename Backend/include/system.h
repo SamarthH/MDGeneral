@@ -23,7 +23,7 @@ namespace System{
 		double energy_potential; /**< Defines the total potential energy of interaction at this instant */
 		std::vector<double> energy_kinetic; /**< Defines the kinetic energy of each particle type */
 		double time; /**< This is the amount of time passed since the beginning of the simulation */
-		int state;
+		int state; ///< The timestep number the system is in now
 		int numpartot;///< Total number of particles
 		system_state(int n_types, int n_dimensions, std::vector<int>& n_particles){
 			//Allocating (reserving) system_state variables
@@ -158,7 +158,7 @@ namespace System{
 	class constants_thermostat
 	{
 	public:
-		std::vector<std::vector<double>> thermostat_const;
+		std::vector<std::vector<double>> thermostat_const; ///< This vector stores constants of the thermostats
 
 		// Parametrized Constructor
 
@@ -252,11 +252,12 @@ namespace System{
 		std::vector<void (*)(simulation&, int)> thermostat; /**< This stores thermostats for different particle sets */
 		std::vector<std::vector<void (*)(simulation&, int, int)>> interaction; /**< This defines the set of functions for interaction between different particle types. Also allows for non-symmetric interaction.*/
 		std::vector<double> box_size_limits; /**< We assume that the initial limits are all (0,0,0,...,0) to whatever the limits define for a box (allocate to n_dimensions size) */
+		int total_steps; ///< Total number of steps to be taken
 
 		simulation(std::string input, double size[]):input_params(input), system_state(n_types,n_dimensions,n_particles), constants_interaction(n_types), constants_thermostat(n_types), correlation(n_types,n_dimensions,n_particles,runtime,timestep)
 		{
 
-			//Please check here @Sweptile
+			total_steps = (int)(runtime/timestep);
 
 			//Allocating and defining box_size_limits
 			try{
