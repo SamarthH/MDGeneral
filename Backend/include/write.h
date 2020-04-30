@@ -3,7 +3,7 @@
 
 #include"system.h"
 
-void write_traj(simulation* sim);
+void write_traj(System::simulation& sim);
 
 
 #endif

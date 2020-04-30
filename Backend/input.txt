@@ -1,9 +1,0 @@
-n_types = 0
-n_dimensions = 0
-n_particles = 0
-timestep = 0
-runtime = 0
-parallelize = 0
-mass = 0
-temperature_required = 0
-periodic_boundary = 0

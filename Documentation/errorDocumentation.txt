@@ -1,2 +1,7 @@
-Error No.	Error Meaning							Possible Solutions
-0001		Not enough heap Memory					Try to decrease the number of particles or try on a machine with higher ram
+Error No.	Error Meaning												Possible Solutions
+0001		Not enough heap Memory										Try to decrease the number of particles or try on a machine with higher ram
+0002		Bad alloc(Mostly caused by lack of memory)					Try to decrease the number of particles or try on a machine with higher ram
+0003		Not all interactions have been provided						Input all the interactions (for all particle types)
+0004		Not all thermostats have been provided						Input all the thermostats (for all particle types)
+0005		Gamma function with invalid argument						Gamma function only returns gamma of int and half-int.
+0006		Too many space dimensions									Decrease number of space dimensions

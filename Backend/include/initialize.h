@@ -1,3 +1,4 @@
+/** @file */ 
 #ifndef INITIALIZE_H
 #define INITIALIZE_H
 
@@ -7,7 +8,7 @@
 #include"system.h"
 #include"constants.h"
 
-void init_sim(simulation* sim);
+void init_sim(System::simulation& sim);
 
 
 
