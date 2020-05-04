@@ -25,7 +25,7 @@ Thermostat constants (For Anderson(\nu), for Bussi(\tau))
 box_size_limits (double[n_dimensions] > 0);
 
 //Interaction between particles
-
+// Might make interaction into a list later to allow for multiple interactions.
 for(i from 0 to n_types)
     for(j from 0 to i)
         for(k from 0 to n_atoms[i])
