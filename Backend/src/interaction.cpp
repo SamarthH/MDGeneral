@@ -6,6 +6,86 @@
 #include <algorithm>
 #include "universal_functions.h"
 #include "interaction.h"
+#include "quaternion.h"
+
+//
+//
+//
+// MAINTAIN DISTANCE
+//
+//
+//
+/* Internal Functions start here*/
+
+//Updates the acceleration array
+void _get_acceleration(System::simulation& sim)
+{
+	#pragma omp target teams distribute parallel for
+	for (int i = 0; i < sim.n_types; ++i)
+	{
+		#pragma omp parallel for
+		for (int j = 0; j < sim.n_molecules[i]; ++j)
+		{
+
+			double f[3] = {0,0,0}; // Force array
+
+			#pragma omp parallel for
+			for (int k = 0; k < sim.n_atoms[i]; ++k)
+			{
+				#pragma omp parallel for
+				for (int l = 0; l < sim.n_dimensions; ++l)
+				{
+					#pragma omp atomic
+					f[l] += sim.force_par[i][j][k][l];
+				}
+			}
+
+			#pragma omp parallel for
+			for (int k = 0; k < sim.n_dimensions; ++k)
+			{
+				sim.acceleration_com[i][j][k] = f[k]/sim.mass[i];
+			}
+
+		}
+	}
+}
+
+//Updates the torque array
+void _get_torque(System::simulation& sim)
+{
+	#pragma omp target teams distribute parallel for
+	for (int i = 0; i < sim.n_types; ++i)
+	{
+		#pragma omp parallel for
+		for (int j = 0; j < sim.n_molecules[i]; ++j)
+		{
+			#pragma omp parallel for
+			for (int k = 0; k < sim.n_atoms[i]; ++k)
+			{
+				quaternion t;
+				qua_vcross(sim.position_par_com[i][j][k],sim.force_par[i][j][k],t);
+				#pragma omp parallel for
+				for (int l = 1; l < 4; ++l)
+				{
+					#pragma omp atomic
+					sim.torque[i][j][l] += t[l];
+				}				
+			}
+		}
+	}
+}
+/* Internal Functions end here*/
+//
+//
+//
+//
+// MAINTAIN DISTANCE
+//
+//
+//
+//
+//
+
 
 /*******************************************************************************
  * \brief Initializes the constant arrays for interactions for speed
@@ -39,7 +119,7 @@ void initialize_interactions(System::simulation& sim)
 				sim.interaction_const[i][j][4] = std::pow(sim.interaction_const[i][j][1],6);
 				double temp = sim.interaction_const[i][j][4]/std::pow(sim.interaction_const[i][j][2],6); //temp = (sigma/r_cut)^6
 				sim.interaction_const[i][j][3] = 4*sim.interaction_const[i][j][0]*temp*(temp-1);
-				sim.interaction_const[i][j][5] = 2*sim.interaction_const[i][j][0]*(sim.n_particles[i]*sim.n_particles[j]/vol)*surface_unit_sphere(dim);
+				sim.interaction_const[i][j][5] = 2*sim.interaction_const[i][j][0]*(sim.n_molecules[i]*sim.n_molecules[j]/vol)*surface_unit_sphere(dim);
 				sim.interaction_const[i][j][5] *= (sim.interaction_const[i][j][4]*sim.interaction_const[i][j][4]*std::pow(sim.interaction_const[i][j][2],dim-12)/(dim-12) - sim.interaction_const[i][j][4]*std::pow(sim.interaction_const[i][j][2],dim-6)/(dim-6));
 
 			}
@@ -59,17 +139,19 @@ void initialize_interactions(System::simulation& sim)
  * respectively in the position array assuming periodic boundary conditions
  *
  * @param sim Simulation being used
- * @param type1 Particle type of particle 1
- * @param type2 Particle type of particle 2
- * @param n1 Particle index of particle 1 in position[type1] array
- * @param n2 Particle index of particle 2 in position[type2] array
+ * @param type1 Type of molecule 1
+ * @param type2 Type of molecule 2
+ * @param n1 Molecule index of molecule 1 in position_par_world[type1] array
+ * @param n2 Molecule index of molecule 1 in position_par_world[type1] array
+ * @param m1 Particle index of particle in molecule 1
+ * @param m2 Particle index of particle in molecule 2
  ******************************************************************************/
-double distance_periodic(System::simulation& sim, int type1, int n1, int type2, int n2)
+double distance_periodic(System::simulation& sim, int type1, int n1, int m1, int type2, int n2, int m2)
 {
 	double dist = 0;
 	for (int i = 0; i < sim.n_dimensions; ++i)
 	{
-		double temp = abs(sim.position[type1][n1][i] - sim.position[type2][n2][i]);
+		double temp = abs(sim.position_par_world[type1][n1][m1][i] - sim.position_par_world[type2][n2][m2][i]);
 		double temp2 = std::min(sim.box_size_limits[i] - temp,temp);
 		dist+= temp2*temp2;
 	}
@@ -80,26 +162,12 @@ double distance_periodic(System::simulation& sim, int type1, int n1, int type2, 
 /*******************************************************************************
  * \brief This function calls all the required interaction functions between the particles
  * 
- * Calls all the interactiosn and updates acceleration and energy arrays
+ * Calls all the interactions and updates acceleration and energy arrays
  *
  * @param sim Simulation being used
  ******************************************************************************/
 void interact(System::simulation& sim){
 	sim.energy_potential = 0;
-
-	#pragma omp parallel for
-	for (int i = 0; i < sim.n_types; ++i)
-	{
-		#pragma omp target teams distribute parallel for collapse(2)
-		for (int j = 0; j < sim.n_particles[i]; ++j)
-		{
-			for (int k = 0; k < sim.n_dimensions; ++k)
-			{
-				sim.acceleration[i][j][k] = 0;
-			}
-		}
-	}
-
 
 	//This implementation is for symmetric interactions only (which makes the most sense)
 	for (int i = 0; i < sim.n_types; ++i)
@@ -109,6 +177,9 @@ void interact(System::simulation& sim){
 			sim.interaction[i][j](sim,i,j);
 		}		
 	}
+
+	_get_acceleration(sim);
+	_get_torque(sim);
 }
 
 /*******************************************************************************
@@ -150,44 +221,50 @@ void lj_periodic(System::simulation& sim, int type1, int type2){
 
 
 	double epot =0; //Temp storage of potential energy
-	#pragma omp target teams distribute parallel for collapse(2) reduction(+ : epot)
-	for (int i = 0; i < sim.n_particles[type1]; ++i)
+	#pragma omp target teams distribute parallel for collapse(4)
+	for (int i = 0; i < sim.n_molecules[type1]; ++i)
 	{
-		for (int j = 0; j < sim.n_particles[type2]; ++j)
+		for (int j = 0; j < sim.n_molecules[type2]; ++j)
 		{
-			double r = distance_periodic(sim,type1,i,type2,j);
-			if(r < sim.interaction_const[type1][type2][2])
+			for (int k = 0; k < sim.n_atoms[type1]; ++k)
 			{
-				double f = 0;
-				double r2 = r*r;
-				double r6 = r2*r2*r2;
-
-				double b1 = 4*sim.interaction_const[type1][type2][0]*sim.interaction_const[type1][type2][4]/r6;
-				double b2 = sim.interaction_const[type1][type2][4]/r6;
-
-				epot+= (b1*(b2-1)-sim.interaction_const[type1][type2][3]);
-
-				f = 6*b1*(2*b2-1)/r2;
-
-				double fx;
-				#pragma omp parallel for
-				for (int k = 0; k < sim.n_dimensions; ++k)
+				for (int l = 0; l < sim.n_atoms[type2]; ++l)
 				{
-					double x = sim.position[type1][i][k] - sim.position[type2][j][k];
-					if(x > sim.box_size_limits[k])
+					double r = distance_periodic(sim,type1,i,k,type2,j,l);
+					if(r < sim.interaction_const[type1][type2][2])
 					{
-						x -= -sim.box_size_limits[k];
-					}
-					else if(x < -sim.box_size_limits[k])
-					{
-						x += sim.box_size_limits[k];
-					}
+						double f = 0;
+						double r2 = r*r;
+						double r6 = r2*r2*r2;
 
-					fx = f*x;
-					#pragma omp atomic
-					sim.acceleration[type1][i][k] += fx/sim.mass[type1];
-					#pragma omp atomic
-					sim.acceleration[type2][j][k] -= fx/sim.mass[type2];
+						double b1 = 4*sim.interaction_const[type1][type2][0]*sim.interaction_const[type1][type2][4]/r6;
+						double b2 = sim.interaction_const[type1][type2][4]/r6;
+
+						f = 6*b1*(2*b2-1)/r2;
+
+						#pragma omp parallel for
+						for (int m = 0; m < sim.n_dimensions; ++m)
+						{
+							double fx;
+							double x = sim.position_par_world[type1][i][k][m] - sim.position_par_world[type2][j][l][m];
+							if(x > sim.box_size_limits[m])
+							{
+								x -= -sim.box_size_limits[m];
+							}
+							else if(x < -sim.box_size_limits[m])
+							{
+								x += sim.box_size_limits[m];
+							}
+
+							fx = f*x;
+							#pragma omp atomic
+							sim.force_par[type1][i][k][m] += fx;
+							#pragma omp atomic
+							sim.force_par[type2][j][l][m] -= fx;
+						}
+						#pragma omp atomic
+						epot+= (b1*(b2-1)-sim.interaction_const[type1][type2][3]);
+					}
 				}
 			}
 		}
@@ -223,42 +300,45 @@ void lj_box(System::simulation& sim, int type1, int type2){
 	interaction_const[i][j][4] = \sigma^6
 	interaction_const[i][j][5] = Tail Energy (assuming constant distribution outside cutoff radius)
 	*/
-
 	double epot =0; //Temp storage of potential energy
-	#pragma omp target teams distribute parallel for collapse(2) reduction(+ : epot)
-	for (int i = 0; i < sim.n_particles[type1]; ++i)
+	#pragma omp target teams distribute parallel for collapse(4)
+	for (int i = 0; i < sim.n_molecules[type1]; ++i)
 	{
-		for (int j = 0; j < sim.n_particles[type2]; ++j)
+		for (int j = 0; j < sim.n_molecules[type2]; ++j)
 		{
-			double r2 = 0;
-
-			for (int k = 0; k < sim.n_dimensions; ++k)
+			for (int k = 0; k < sim.n_atoms[type1]; ++k)
 			{
-				r2 += std::pow(sim.position[type1][i][k] - sim.position[type2][j][k],2);
-			}
-
-			if(std::sqrt(r2) < sim.interaction_const[type1][type2][2])
-			{
-				double f = 0;
-				double r6 = r2*r2*r2;
-
-				double b1 = 4*sim.interaction_const[type1][type2][0]*sim.interaction_const[type1][type2][4]/r6;
-				double b2 = sim.interaction_const[type1][type2][4]/r6;
-
-				epot+= (b1*(b2-1)-sim.interaction_const[type1][type2][3]);
-
-				f = 6*b1*(2*b2-1)/r2;
-
-				double fx;
-				#pragma omp parallel for
-				for (int k = 0; k < sim.n_dimensions; ++k)
+				for (int l = 0; l < sim.n_atoms[type2]; ++l)
 				{
-					double x = sim.position[type1][i][k] - sim.position[type2][j][k];
-					fx = f*x;
-					#pragma omp atomic
-					sim.acceleration[type1][i][k] += fx/sim.mass[type1];
-					#pragma omp atomic
-					sim.acceleration[type2][j][k] -= fx/sim.mass[type2];
+					double r2 = 0;
+					for (int m = 0; m < sim.n_dimensions; ++m)
+					{
+						r2 += std::pow(sim.position_par_world[type1][i][k][m] - sim.position_par_world[type2][j][l][m],2);
+					}
+					if(std::sqrt(r2) < sim.interaction_const[type1][type2][2])
+					{
+						double f = 0;
+						double r6 = r2*r2*r2;
+
+						double b1 = 4*sim.interaction_const[type1][type2][0]*sim.interaction_const[type1][type2][4]/r6;
+						double b2 = sim.interaction_const[type1][type2][4]/r6;
+
+						f = 6*b1*(2*b2-1)/r2;
+
+						#pragma omp parallel for
+						for (int m = 0; m < sim.n_dimensions; ++m)
+						{
+							double fx;
+							double x = sim.position_par_world[type1][i][k][m] - sim.position_par_world[type2][j][l][m];
+							fx = f*x;
+							#pragma omp atomic
+							sim.force_par[type1][i][k][m] += fx;
+							#pragma omp atomic
+							sim.force_par[type2][j][l][m] -= fx;
+						}
+						#pragma omp atomic
+						epot+= (b1*(b2-1)-sim.interaction_const[type1][type2][3]);
+					}
 				}
 			}
 		}

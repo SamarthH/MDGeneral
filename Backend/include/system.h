@@ -8,69 +8,59 @@
 #include <sstream>
 #include <vector>
 #include <cmath>
+#include <array>
 #include "algorithm_constants.h"
+#include "quaternion.h"
 
 namespace System{
 	class system_state
 	{
 	public:
-		std::vector<std::vector<std::vector<double>>> position; /**< Vector of n_types X n_particles[of each type] X n_dimensions size storing positions of particles */
-		std::vector<std::vector<std::vector<double>>> orientation; /**< Vector of n_types X n_particles[of each type] X n_dimensions size storing orientation of particles */
-		std::vector<std::vector<std::vector<double>>> velocity; /**< Vector of n_types X n_particles[of each type] X n_dimensions size storing velocity of particles */
-		std::vector<std::vector<std::vector<double>>> acceleration; /**< Vector of n_types X n_particles[of each type] X n_dimensions size storing accelerations of particles */
+
+		std::vector<std::vector<std::array<double,3>>> position_com; /**< Vector of n_types X n_molecules[of each type] X n_dimensions (<=3) size storing positions of molecule COM */
+		std::vector<std::vector<std::array<double,3>>> velocity_com; /**< Vector of n_types X n_molecules[of each type] X n_dimensions (<=3) size storing velocity of molecule COM */
+		std::vector<std::vector<std::array<double,3>>> acceleration_com; /**< Vector of n_types X n_molecules[of each type] X n_dimensions (<=3) size storing accelerations of molecule COM */
+
+		std::vector<std::vector<std::vector<std::array<double, 3>>>> position_par_world; ///< Position of each particle w.r.t. the world frame
+		std::vector<std::vector<std::vector<std::array<double, 3>>>> position_par_com; ///< Position of each particle w.r.t. the COM frame
+
+		std::vector<std::vector<std::vector<std::array<double, 3>>>> force_par; ///< Force on each particle
+
+		std::vector<std::vector<quaternion>> angvelocity;///< Vector of angular velocities of molecules
+		std::vector<std::vector<quaternion>> angmomentum; ///< Vector of angular momenta of molecules
+		std::vector<std::vector<quaternion>> torque; ///< Vector of torques of molecules
+		std::vector<std::vector<quaternion>> quatrot; ///< Rotation quaternion of molecules
+
 		std::vector<double> temperature; /**< This defines the temperatures of the n_types particle sets */
 		double energy_total; /**< Defines the total energy at this instant */
 		double energy_potential; /**< Defines the total potential energy of interaction at this instant */
 		std::vector<double> energy_kinetic; /**< Defines the kinetic energy of each particle type */
 		double time; /**< This is the amount of time passed since the beginning of the simulation */
-		int state; ///< The timestep number the system is in now
+		long int state; ///< The timestep number the system is in now
 		int numpartot;///< Total number of particles
-		system_state(int n_types, int n_dimensions, std::vector<int>& n_particles){
-			//Allocating (reserving) system_state variables
-			try{
-				temperature.reserve(n_types);
-				energy_kinetic.reserve(n_types);
-				position.reserve(n_types);
-				velocity.reserve(n_types);
-				orientation.reserve(n_types);
-				acceleration.reserve(n_types);
 
-				for (int i = 0; i < n_types; ++i)
-				{
-					position[i].reserve(n_particles[i]);
-					velocity[i].reserve(n_particles[i]);
-					orientation[i].reserve(n_particles[i]);
-					acceleration[i].reserve(n_particles[i]);
-
-					numpartot += n_particles[i];
-
-					for (int j = 0; j < n_particles[i]; ++j)
-					{
-						position[i][j].reserve(n_dimensions);
-						velocity[i][j].reserve(n_dimensions);
-						orientation[i][j].reserve(n_dimensions);
-						acceleration[i][j].reserve(n_dimensions);
-					}
-				}
-			}
-			catch(const std::length_error& le){
-				std::cerr<<"Error 0001"<<std::endl; 
-				exit(0001);
-			}
-			catch(const std::bad_alloc& ba){
-				std::cerr<<"Error 0002"<<std::endl;
-				exit(0002);
-			}
-			//Done
-		}
+		system_state(int n_types, int n_dimensions, std::vector<int>& n_molecules);
 	};
 
+	class molecule_const
+	{
+	public:
+
+		std::vector<int> n_atoms;
+		std::vector<std::array<double,3>> pos_init_mol; ///< This represents the initial positions of the atoms in the molecule w.r.t the COM
+		std::vector<std::array<std::array<double,3>,3>> inertia_tensor; ///< Inertia tensor in initial position
+		std::vector<std::array<std::array<double,3>,3>> inv_inertia_tensor; ///< Inverse of Inertia tensor in initial position
+
+		molecule_const(int n_types);
+		~molecule_const();
+	};
+	
 	class input_params
 	{
 	public:
 		int n_types; ///< This represents the number of types of particles
 		int n_dimensions; ///< This represents the number of dimensions of the simulation (by default must be 3)
-		std::vector<int> n_particles; ///< This represents the number of particles of each type (n_types sized)
+		std::vector<int> n_molecules; ///< This represents the number of particles of each type (n_types sized)
 		double timestep; ///< This defines the size of each timestep (dt)
 		double runtime; ///< This defines the time for which to run the simulation
 		int parallelize; ///< If 1, parallelize. Else, do not parallelize.
@@ -78,37 +68,7 @@ namespace System{
 		std::vector<double> temperature_required; ///< This is the vector of the temperatures required to be mainted for each particle type by the thermostat.
 		int periodic_boundary; ///< Use periodic boundary conditions if 1. If 0, use rigid walls.
 		
-		input_params(std::string input){
-			std::vector<int> input_vector;
-			std::stringstream ss(input);
-			
-			while(ss.good()){			//This packages the input string (comma separated) into the input_vector object
-				std::string temp;
-				std::getline(ss, temp, ',');
-				input_vector.push_back(std::stod(temp));
-			}
-			
-			//input_vector to the variables
-			n_types = (int)input_vector[0];
-			n_dimensions = (int)input_vector[1];
-			n_particles.resize(n_types);
-			for(int i=2; i<n_types+2; i++){
-				n_particles.push_back((int)input_vector[i]);
-			}
-			timestep = input_vector[n_types+2];
-			runtime = input_vector[n_types+3];
-			parallelize = (int)input_vector[n_types+4]; 
-			mass.resize(n_types);
-			for(int i=n_types+5; i<2*n_types+5; i++){
-				mass.push_back(input_vector[i]);
-			}
-			temperature_required.resize(n_types);
-			for(int i=2*n_types+5; i<3*n_types+5; i++){
-				temperature_required.push_back(input_vector[i]);
-			}
-			periodic_boundary = (int)input_vector[3*n_types+5];
-			
-		}
+		input_params(std::string input);
 	};
 
 	class constants_interaction
@@ -131,28 +91,7 @@ namespace System{
 
 		// Parametrized Constructor
 
-		constants_interaction(int n_types /** Number of types of particles */)
-		{
-			try{
-				interaction_const.reserve(n_types);
-				for (int i = 0; i < n_types; ++i)
-				{
-					interaction_const[i].reserve(n_types);
-					for (int j = 0; j < n_types; ++j)
-					{
-						interaction_const[i][j].reserve(8);
-					}
-				}
-			}
-			catch(const std::length_error& le){
-				std::cerr<<"Error 0001"<<std::endl; 
-				exit(0001);
-			}
-			catch(const std::bad_alloc& ba){
-				std::cerr<<"Error 0002"<<std::endl;
-				exit(0002);
-			}
-		}
+		constants_interaction(int n_types /** Number of types of particles */);
 	};
 
 	class constants_thermostat
@@ -162,91 +101,42 @@ namespace System{
 
 		// Parametrized Constructor
 
-		constants_thermostat(int n_types)
-		{
-			try{
-				thermostat_const.reserve(n_types);
-				for (int i = 0; i < n_types; ++i)
-				{
-					thermostat_const[i].reserve(4);
-				}
-			}
-			catch(const std::length_error& le){
-				std::cerr<<"Error 0001"<<std::endl; 
-				exit(0001);
-			}
-			catch(const std::bad_alloc& ba){
-				std::cerr<<"Error 0002"<<std::endl;
-				exit(0002);
-			}
-		}
+		constants_thermostat(int n_types);
 	};
 
 	class correlation
 	{
 	public:
-		std::vector<std::vector<std::vector<double>>> velocity_initial; ///< Stores the velocity of the particles at t=0
+		std::vector<std::vector<std::array<double,3>>> velocity_initial; ///< Stores the velocity of the particles at t=0
 		std::vector<std::vector<double>> correlation_velocity; /**< Stores the velocity correlation for each particle type at each timestep (the n_types+1 th entry is the correlation over all types) \n The format is correlation_velocity[step_number][particletype]*/
 
 		/**********************************************
 		 * This constructor reserves space for the correlation arrays and initial conditions
 		 */
-		correlation(int n_types, int n_dimensions, std::vector<int>& n_particles, double runtime, double timestep)
-		{
-			// Reserving for initial arrays
-
-			try
-			{
-				velocity_initial.reserve(n_types);
-
-				for (int i = 0; i < n_types; ++i)
-				{
-					velocity_initial[i].reserve(n_particles[i]);
-
-					for (int j = 0; j < n_particles[i]; ++j)
-					{
-						velocity_initial[i][j].reserve(n_dimensions);
-					}
-				}
-			}
-			catch(const std::length_error& le){
-				std::cerr<<"Error 0001"<<std::endl; 
-				exit(0001);
-			}
-			catch(const std::bad_alloc& ba){
-				std::cerr<<"Error 0002"<<std::endl;
-				exit(0002);
-			}
-			// Done
-
-
-			int n_steps = (int)(runtime/timestep);
-			//Reserving for correlations
-
-			try
-			{
-				correlation_velocity.reserve(n_steps);
-
-				for (int i = 0; i < n_steps; ++i)
-				{
-					correlation_velocity[i].reserve(n_types+1);
-				}
-			}
-			catch(const std::length_error& le){
-				std::cerr<<"Error 0001"<<std::endl; 
-				exit(0001);
-			}
-			catch(const std::bad_alloc& ba){
-				std::cerr<<"Error 0002"<<std::endl;
-				exit(0002);
-			}
-			//Done
-		}
+		correlation(int n_types, int n_dimensions, std::vector<int>& n_molecules, double runtime, double timestep);
 		~correlation();
 		
 	};
 
-	class simulation : public input_params, public system_state, public constants_interaction, public constants_thermostat, public correlation
+	class mixingclass1 : public constants_interaction, public constants_thermostat, public molecule_const
+	{
+	public:
+		mixingclass1(int n_types): constants_interaction(n_types), constants_thermostat(n_types), molecule_const(n_types) {}
+		~mixingclass1();
+		
+	};
+
+	class mixingclass2 : public mixingclass1, public system_state, public correlation
+	{
+	public:
+		mixingclass2(int n_types,int n_dimensions,std::vector<int>& n_molecules, double runtime, double timestep) : mixingclass1(n_types), system_state(n_types,n_dimensions,n_molecules), correlation(n_types,n_dimensions,n_molecules,runtime,timestep) {}
+		~mixingclass2();
+		
+	};
+
+
+
+	class simulation : public input_params, public mixingclass2
 	{
 	public:
 		std::vector<void (*)(simulation&, int)> thermostat; /**< This stores thermostats for different particle sets */
@@ -255,7 +145,7 @@ namespace System{
 		int total_steps; ///< Total number of steps to be taken
 		std::vector<int> dof; ///< This stores the number of degrees of freedom for each molecule/particle type.
 
-		simulation(std::string input, double size[]):input_params(input), system_state(n_types,n_dimensions,n_particles), constants_interaction(n_types), constants_thermostat(n_types), correlation(n_types,n_dimensions,n_particles,runtime,timestep)
+		simulation(std::string input, double size[]):input_params(input), mixingclass2(n_types,n_dimensions,n_molecules,runtime,timestep)
 		{
 
 			total_steps = (int)(runtime/timestep);

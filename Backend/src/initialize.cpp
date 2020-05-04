@@ -18,7 +18,7 @@ void init_sim(System::simulation& sim)
             velsum[i][k]=0;
         }
         #pragma omp parallel for
-        for(int j = 0; j < sim.n_particles[i];++j)
+        for(int j = 0; j < sim.n_molecules[i];++j)
         {
             #pragma omp parallel for
             for(int k = 0; k < sim.n_dimensions;++k)
@@ -31,25 +31,25 @@ void init_sim(System::simulation& sim)
 
                 trng::uniform01_dist<> unif;
 
-                sim.position[i][j][k] = unif(R)*sim.box_size_limits[k];
-                sim.velocity[i][j][k] = (unif(R) - 0.5);
-                velsum[i][k]+=sim.velocity[i][j][k];
-                vel2sum[i]+=pow(sim.velocity[i][j][k],2);
+                sim.position_com[i][j][k] = unif(R)*sim.box_size_limits[k];
+                sim.velocity_com[i][j][k] = (unif(R) - 0.5);
+                velsum[i][k]+=sim.velocity_com[i][j][k];
+                vel2sum[i]+=pow(sim.velocity_com[i][j][k],2);
             }
         }
         #pragma omp parallel for
         for(int k = 0; k < sim.n_dimensions;++k)
         {
-            velsum[i][k]=velsum[i][k]/sim.n_particles[i];
+            velsum[i][k]=velsum[i][k]/sim.n_molecules[i];
         }
-        vel2sum[i]=vel2sum[i]/sim.n_particles[i];
+        vel2sum[i]=vel2sum[i]/sim.n_molecules[i];
         scale[i]=sqrt(sim.n_dimensions*BOLTZ_SI*sim.temperature[i]/(sim.mass[i]*vel2sum[i]));
 
-        for(int j = 0; j < sim.n_particles[i];++j)
+        for(int j = 0; j < sim.n_molecules[i];++j)
         {
             for(int k = 0; k < sim.n_dimensions;++k)
             {
-                sim.velocity[i][j][k]=(sim.velocity[i][j][k]-velsum[i][k])*scale[i];
+                sim.velocity_com[i][j][k]=(sim.velocity_com[i][j][k]-velsum[i][k])*scale[i];
             }
         }
 

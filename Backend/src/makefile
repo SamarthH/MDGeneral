@@ -8,10 +8,10 @@ LDIR =../lib
 
 LIBS= -ltrng4 -fopenmp
 
-_DEPS = algorithm_constants.h client.h constants.h correlations.h initialize.h integrate.h interaction.h system.h thermo.h thermostat.h universal_functions.h write.h
+_DEPS = algorithm_constants.h client.h constants.h correlations.h initialize.h integrate.h interaction.h quaternion.h system.h thermo.h thermostat.h universal_functions.h write.h
 DEPS = $(patsubst %,$(IDIR)/%,$(_DEPS))
 
-_OBJ = client.o correlations.o initialize.o integrate.o interaction.o thermo.o thermostat.o write.o universal_functions.o
+_OBJ = client.o correlations.o initialize.o integrate.o interaction.o quaternion.o system.o thermo.o thermostat.o write.o universal_functions.o
 OBJ = $(patsubst %,$(ODIR)/%,$(_OBJ))
 
 

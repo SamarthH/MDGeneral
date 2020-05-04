@@ -20,12 +20,14 @@ void initialize_interactions(System::simulation& sim);
  * respectively in the position array assuming periodic boundary conditions
  *
  * @param sim Simulation being used
- * @param type1 Particle type of particle 1
- * @param type2 Particle type of particle 2
- * @param n1 Particle index of particle 1 in position[type1] array
- * @param n2 Particle index of particle 2 in position[type2] array
+ * @param type1 Type of molecule 1
+ * @param type2 Type of molecule 2
+ * @param n1 Molecule index of molecule 1 in position_par_world[type1] array
+ * @param n2 Molecule index of molecule 1 in position_par_world[type1] array
+ * @param m1 Particle index of particle in molecule 1
+ * @param m2 Particle index of particle in molecule 2
  ******************************************************************************/
-double distance_periodic(System::simulation& sim, int type1, int n1, int type2, int n2);
+double distance_periodic(System::simulation& sim, int type1, int n1, int m1, int type2, int n2, int m2);
 
 /*******************************************************************************
  * \brief This function calls all the required interaction functions between the particles
