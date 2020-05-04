@@ -41,19 +41,21 @@ void interact(System::simulation& sim);
 /*******************************************************************************
  * \brief Setup the free particle interaction between two particle types
  * 
- * Setup of free particle interaction between particle types type1 and type2.
+ * Setup of free particle interaction of atoms n1 and n2 of molecules of type1 and type2.
  * This does nothing. The function is empty.
  *
  * @param sim Simulation being used
  * @param type1 First type of particle interacting
  * @param type2 Second type of particle interacting
+ * @param k Atom n1 of type1
+ * @param l Atom n2 of type2
  ******************************************************************************/
-void free_particles(System::simulation& sim,int type1,int type2);
+void free_particles(System::simulation& sim,int type1,int type2, int k, int l);
 
 /*******************************************************************************
  * \brief Setup the Lennard-Jones potential for periodic boundary conditions between two particle types
  * 
- * Setup of Lennard-Jones potential for periodic boundary conditions between particle types type1 and type2.
+ * Setup of Lennard-Jones potential for periodic boundary conditions between atoms n1 and n2 of molecules of type1 and type2.
  * This requires the cutoff <= half the box size because it only checks the nearest images. \n
  * \n
  * Potential : \f[ U(r) = 4\epsilon*[(\frac{\sigma}{r})^12 - (\frac{\sigma}{r})^6] - U(r_cut) \f] \n
@@ -70,13 +72,15 @@ void free_particles(System::simulation& sim,int type1,int type2);
  * @param sim Simulation being used
  * @param type1 First type of particle interacting
  * @param type2 Second type of particle interacting
+ * @param k Atom n1 of type1
+ * @param l Atom n2 of type2
  ******************************************************************************/
-void lj_periodic(System::simulation& sim,int type1,int type2); 
+void lj_periodic(System::simulation& sim,int type1,int type2, int k, int l); 
 
 /*******************************************************************************
  * \brief Setup the Lennard-Jones potential for rigid box boundary conditions between two particle types
  * 
- * Setup of Lennard-Jones potential for rigid box boundary conditions between particle types type1 and type2. \n
+ * Setup of Lennard-Jones potential for rigid box boundary conditions between atoms n1 and n2 of molecules of type1 and type2 \n
  * \n
  * Potential : \f[ U(r) = 4\epsilon*[(\frac{\sigma}{r})^12 - (\frac{\sigma}{r})^6] - U(r_cut) \f] \n
  * Force : \f[ F(r) = 24\epsilon*\frac{\sigma^6}{r^7}*[2(\frac{\sigma}{r})^6 - 1] \vu{r} \f] \n
@@ -92,7 +96,9 @@ void lj_periodic(System::simulation& sim,int type1,int type2);
  * @param sim Simulation being used
  * @param type1 First type of particle interacting
  * @param type2 Second type of particle interacting
+ * @param k Atom n1 of type1
+ * @param l Atom n2 of type2
  ******************************************************************************/
-void lj_box(System::simulation& sim,int type1,int type2);
+void lj_box(System::simulation& sim,int type1,int type2, int k, int l);
 
 #endif

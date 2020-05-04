@@ -77,16 +77,16 @@ namespace System{
 		/**
 		 *  \brief Stores the constants of interaction for all the interactions between particles.
 		 *
-		 *  Stores the constants of interaction for all the interactions between particles. For interaction of particles of type1 and type2 the constants are stored in vector interaction_const[type1][type2] \n
+		 *  Stores the constants of interaction for all the interactions between particles. For interaction of atoms n1 and n2 of molecules of type1 and type2 the constants are stored in vector interaction_const[type1][type2][n1][n2] \n
 		   If the interaction is of the Lennard Jones type, \n
-		   interaction_const[i][j][0] = $\epsilon$ \n
-		   interaction_const[i][j][1] = $\sigma$ \n
-		   interaction_const[i][j][2] = Cutoff radius/distance (r_cut) \n
-		   interaction_const[i][j][3] = Truncated Potential (etrunc) \n
-		   interaction_const[i][j][4] = $\sigma^6$ \n
-		   interaction_const[i][j][5] = Tail Energy (assuming constant distribution outside cutoff radius) \n
+		   interaction_const[i][j][k][l][0] = $\epsilon$ \n
+		   interaction_const[i][j][k][l][1] = $\sigma$ \n
+		   interaction_const[i][j][k][l][2] = Cutoff radius/distance (r_cut) \n
+		   interaction_const[i][j][k][l][3] = Truncated Potential (etrunc) \n
+		   interaction_const[i][j][k][l][4] = $\sigma^6$ \n
+		   interaction_const[i][j][k][l][5] = Tail Energy (assuming constant distribution outside cutoff radius) \n
 		*/
-		std::vector<std::vector<std::vector<double>>> interaction_const;
+		std::vector<std::vector<std::vector<std::vector<std::vector<double>>>>> interaction_const;
 
 
 		// Parametrized Constructor
@@ -140,7 +140,7 @@ namespace System{
 	{
 	public:
 		std::vector<void (*)(simulation&, int)> thermostat; /**< This stores thermostats for different particle sets */
-		std::vector<std::vector<void (*)(simulation&, int, int)>> interaction; /**< This defines the set of functions for interaction between different particle types. Also allows for non-symmetric interaction.*/
+		std::vector<std::vector<std::vector<std::vector<void (*)(simulation&, int, int, int, int)>>>> interaction; /**< This defines the set of functions for interaction between different particle types. Also allows for non-symmetric interaction.*/
 		std::vector<double> box_size_limits; /**< We assume that the initial limits are all (0,0,0,...,0) to whatever the limits define for a box (allocate to n_dimensions size) */
 		int total_steps; ///< Total number of steps to be taken
 		std::vector<int> dof; ///< This stores the number of degrees of freedom for each molecule/particle type.
