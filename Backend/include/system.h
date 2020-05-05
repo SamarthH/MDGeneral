@@ -27,10 +27,9 @@ namespace System{
 
 		std::vector<std::vector<std::vector<std::array<double, 3>>>> force_par; ///< Force on each particle
 
-		std::vector<std::vector<std::array<double,3>>> angvelocity;///< Vector of angular velocities of molecules
 		std::vector<std::vector<std::array<double,3>>> angmomentum; ///< Vector of angular momenta of molecules
 		std::vector<std::vector<std::array<double,3>>> torque; ///< Vector of torques of molecules
-		std::vector<std::vector<std::array<double,4>>> quatrot; ///< Rotation quaternion of molecules
+		std::vector<std::vector<quaternion>> quatrot; ///< Rotation quaternion of molecules
 		std::vector<std::vector<std::array<std::array<double,3>,3>>> rotation_matrix; ///< Rotation Matrix generated from the quaternion
 
 		std::vector<double> temperature; /**< This defines the temperatures of the n_types particle sets */

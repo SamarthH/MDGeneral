@@ -9,7 +9,7 @@
 #include "interaction.h"
 #include "thermostat.h"
 
-#define QUATERNION_ERROR_TOLERANCE 0.001 // Taken from DOI: 10.1103/PhysRevE.81.056706
+#define QUATERNION_ERROR_TOLERANCE 0.00000000000001 // Taken from DOI: 10.1103/PhysRevE.81.056706
 
 /*******************************************************************************
  * This function integrates the equation of motion for periodic boundary conditions
