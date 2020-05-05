@@ -62,10 +62,10 @@ void _get_torque(System::simulation& sim)
 			#pragma omp parallel for
 			for (int k = 0; k < sim.n_atoms[i]; ++k)
 			{
-				quaternion t;
+				std::array<double,3> t;
 				qua_vcross(sim.position_par_com[i][j][k],sim.force_par[i][j][k],t);
 				#pragma omp parallel for
-				for (int l = 1; l < 4; ++l)
+				for (int l = 0; l < 3; ++l)
 				{
 					#pragma omp atomic
 					sim.torque[i][j][l] += t[l];
@@ -74,6 +74,7 @@ void _get_torque(System::simulation& sim)
 		}
 	}
 }
+
 /* Internal Functions end here*/
 //
 //

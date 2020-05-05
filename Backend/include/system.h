@@ -23,13 +23,15 @@ namespace System{
 
 		std::vector<std::vector<std::vector<std::array<double, 3>>>> position_par_world; ///< Position of each particle w.r.t. the world frame
 		std::vector<std::vector<std::vector<std::array<double, 3>>>> position_par_com; ///< Position of each particle w.r.t. the COM frame
+		std::vector<std::vector<std::vector<std::array<double, 3>>>> position_par_com_init; ///< Position of each particle w.r.t. the COM frame at t=0. This is constant throughout the simulation.
 
 		std::vector<std::vector<std::vector<std::array<double, 3>>>> force_par; ///< Force on each particle
 
-		std::vector<std::vector<quaternion>> angvelocity;///< Vector of angular velocities of molecules
-		std::vector<std::vector<quaternion>> angmomentum; ///< Vector of angular momenta of molecules
-		std::vector<std::vector<quaternion>> torque; ///< Vector of torques of molecules
-		std::vector<std::vector<quaternion>> quatrot; ///< Rotation quaternion of molecules
+		std::vector<std::vector<std::array<double,3>>> angvelocity;///< Vector of angular velocities of molecules
+		std::vector<std::vector<std::array<double,3>>> angmomentum; ///< Vector of angular momenta of molecules
+		std::vector<std::vector<std::array<double,3>>> torque; ///< Vector of torques of molecules
+		std::vector<std::vector<std::array<double,4>>> quatrot; ///< Rotation quaternion of molecules
+		std::vector<std::vector<std::array<std::array<double,3>,3>>> rotation_matrix; ///< Rotation Matrix generated from the quaternion
 
 		std::vector<double> temperature; /**< This defines the temperatures of the n_types particle sets */
 		double energy_total; /**< Defines the total energy at this instant */
@@ -49,7 +51,7 @@ namespace System{
 		std::vector<int> n_atoms;
 		std::vector<std::array<double,3>> pos_init_mol; ///< This represents the initial positions of the atoms in the molecule w.r.t the COM
 		std::vector<std::array<std::array<double,3>,3>> inertia_tensor; ///< Inertia tensor in initial position
-		std::vector<std::array<std::array<double,3>,3>> inv_inertia_tensor; ///< Inverse of Inertia tensor in initial position
+		std::vector<std::array<double,3>> inv_inertia_tensor; ///< Inverse of Inertia tensor in initial position (This is required to be the three eigenvalues in order. inv_inerta_tensor[i] = I_diagonal^-1[i][i]). This decreases the number of multiplications required drastically.
 
 		molecule_const(int n_types);
 		~molecule_const();
