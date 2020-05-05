@@ -6,48 +6,18 @@ System::system_state::system_state(int n_types, int n_dimensions, std::vector<in
 	try{
 		temperature.reserve(n_types);
 		energy_kinetic.reserve(n_types);
-		position_com.reserve(n_types);
-		velocity_com.reserve(n_types);
-		acceleration_com.reserve(n_types);
-
-		position_par_world.reserve(n_types);
-		position_par_com.reserve(n_types);
-		position_par_com_init.reserve(n_types);
-
-		force_par.reserve(n_types);
-
-		angmomentum.reserve(n_types);
-		torque.reserve(n_types);
-		quatrot.reserve(n_types);
-		rotation_matrix.reserve(n_types);
+		mol_state.reserve(n_types);
 
 		for (int i = 0; i < n_types; ++i)
 		{
-			position_com[i].reserve(n_molecules[i]);
-			velocity_com[i].reserve(n_molecules[i]);
-			acceleration_com[i].reserve(n_molecules[i]);
+			mol_state[i].reserve(n_molecules[i]);
 
-			position_par_world[i].reserve(n_molecules[i]);
-			position_par_com[i].reserve(n_molecules[i]);
-			position_par_com_init[i].reserve(n_molecules[i]);
-
-			force_par[i].reserve(n_molecules[i]);
-
-			angmomentum[i].reserve(n_molecules[i]);
-			torque[i].reserve(n_molecules[i]);
-			quatrot[i].reserve(n_molecules[i]);
-			rotation_matrix[i].reserve(n_molecules[i]);
+			for (int j = 0; j < n_molecules[i]; ++j)
+			{
+				mol_state[i][j].reservespace(n_atoms[i]);
+			}
 
 			numpartot += n_molecules[i];
-
-			for (int j = 0; j < n_atoms[i]; ++j)
-			{
-				position_par_world[i].reserve(n_molecules[i]);
-				position_par_com[i].reserve(n_molecules[i]);
-				position_par_com_init[i].reserve(n_molecules[i]);
-
-				force_par[i].reserve(n_molecules[i]);
-			}
 		}
 	}
 	catch(const std::length_error& le){
@@ -93,18 +63,10 @@ System::input_params::input_params(std::string input)
 	periodic_boundary = (int)input_vector[3*n_types+5];
 }
 
-System::constants_interaction::constants_interaction(int n_types)
+System::constants_interaction::constants_interaction()
 {
 	try{
-		interaction_const.reserve(n_types);
-		for (int i = 0; i < n_types; ++i)
-		{
-			interaction_const[i].reserve(n_types);
-			for (int j = 0; j < n_types; ++j)
-			{
-				interaction_const[i][j].reserve(8);
-			}
-		}
+		constant.reserve(8);
 	}
 	catch(const std::length_error& le){
 		std::cerr<<"Error 0001"<<std::endl; 

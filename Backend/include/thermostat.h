@@ -36,7 +36,7 @@ void call_thermostat(System::simulation& sim);
  * @param sim Simulation being used
  * @param type Type of particle for thermalization
  ******************************************************************************/
-void no_thermostat(System::simulation& sim, int type);
+void no_thermostat(System::simulation& sim, int type, std::vector<double> constant);
 
 /*******************************************************************************
  * \brief Call when anderson thermostat is to be used
@@ -52,7 +52,7 @@ void no_thermostat(System::simulation& sim, int type);
  * @param sim Simulation being used
  * @param type Type of particle for thermalization
  ******************************************************************************/
-void anderson(System::simulation& sim,int type);
+void anderson(System::simulation& sim,int type, std::vector<double> constant);
 
 /*******************************************************************************
  * \brief Call when Bussi–Donadio–Parrinello thermostat is to be used
@@ -78,5 +78,5 @@ void anderson(System::simulation& sim,int type);
  * @param sim Simulation being used
  * @param type Type of particle for thermalization
  ******************************************************************************/
- void bussi(System::simulation& sim,int type);
+ void bussi(System::simulation& sim,int type, std::vector<double> constant);
 #endif

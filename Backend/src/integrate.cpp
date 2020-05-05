@@ -19,7 +19,7 @@ void _get_rotation_matrix(System::simulation& sim)
 		#pragma omp parallel for
 		for (int j = 0; j < sim.n_molecules[i]; ++j)
 		{
-			generate_rotmat(sim.quatrot[i][j],sim.rotation_matrix[i][j]);
+			generate_rotmat(sim.mol_state[i][j].quatrot,sim.mol_state[i][j].rotation_matrix);
 		}
 	}
 }
@@ -36,9 +36,9 @@ void _verlet_trans1(System::simulation& sim)
 			#pragma omp parallel for
 			for (int k = 0; k < sim.n_dimensions; ++k)
 			{
-				sim.position_com[i][j][k] += dt*sim.velocity_com[i][j][k] + 0.5*dt*dt*sim.acceleration_com[i][j][k];
-				sim.position_com[i][j][k] -= sim.box_size_limits[k]*std::floor(sim.position_com[i][j][k]/sim.box_size_limits[k]);
-				sim.velocity_com[i][j][k] += dt*sim.acceleration_com[i][j][k]/2;
+				sim.mol_state[i][j].position_com[k] += dt*sim.mol_state[i][j].velocity_com[k] + 0.5*dt*dt*sim.mol_state[i][j].acceleration_com[k];
+				sim.mol_state[i][j].position_com[k] -= sim.box_size_limits[k]*std::floor(sim.mol_state[i][j].position_com[k]/sim.box_size_limits[k]);
+				sim.mol_state[i][j].velocity_com[k] += dt*sim.mol_state[i][j].acceleration_com[k]/2;
 			}
 		}
 	}
@@ -57,12 +57,12 @@ void _verlet_trans2(System::simulation& sim)
 			#pragma omp parallel for
 			for (int k = 0; k < sim.n_dimensions; ++k)
 			{
-				sim.velocity_com[i][j][k] += dt*sim.acceleration_com[i][j][k]/2;
+				sim.mol_state[i][j].velocity_com[k] += dt*sim.mol_state[i][j].acceleration_com[k]/2;
 				#pragma omp atomic
-				sim.energy_kinetic[i] += sim.velocity_com[i][j][k]*sim.velocity_com[i][j][k];
+				sim.energy_kinetic[i] += sim.mol_state[i][j].velocity_com[k]*sim.mol_state[i][j].velocity_com[k];
 			}
 		}
-		sim.energy_kinetic[i] *= sim.mass[i];
+		sim.energy_kinetic[i] *= sim.molconst[i].mass;
 		sim.temperature[i] = sim.energy_kinetic[i]/(sim.n_molecules[i]*BOLTZ_SI*sim.n_dimensions);
 		sim.energy_total += sim.energy_kinetic[i];
 	}
@@ -84,8 +84,8 @@ void _verlet_rot1(System::simulation& sim)
 		{
 			std::array<double,3> L_m, T_m; // These are L and \tau in molecule frame of reference
 			std::array<std::array<double,3>,3> Rt;
-			transpose_mat(sim.rotation_matrix[i][j],Rt);
-			matrix_mult_vec(Rt,sim.angmomentum[i][j],L_m);
+			transpose_mat(sim.mol_state[i][j].rotation_matrix,Rt);
+			matrix_mult_vec(Rt,sim.mol_state[i][j].angmomentum,L_m);
 			matrix_mult_vec(Rt,sim.torque[i][j],T_m);
 
 			std::array<double,3> omega;
@@ -136,7 +136,7 @@ void _verlet_rot1(System::simulation& sim)
 
 			for (int k = 0; k < 3; ++k)
 			{
-				sim.angmomentum[i][j][k] += dt_half*sim.torque[i][j][k];
+				sim.mol_state[i][j].angmomentum[k] += dt_half*sim.torque[i][j][k];
 			}
 
 			quaternion diffq;
@@ -150,7 +150,7 @@ void _verlet_rot1(System::simulation& sim)
 			{
 				q_half_old = q_half_new; //Copying into old
 
-				qua_rot_vec_opp(q_half_new,sim.angmomentum[i][j],L_m);
+				qua_rot_vec_opp(q_half_new,sim.mol_state[i][j].angmomentum,L_m);
 
 				for (int k = 0; k < 3; ++k)
 				{
@@ -194,7 +194,7 @@ void _verlet_rot2(System::simulation& sim)
 			#pragma omp parallel for
 			for (int k = 0; k < 3; ++k)
 			{
-				sim.angmomentum[i][j][k] += dt_half*sim.torque[i][j][k];
+				sim.mol_state[i][j].angmomentum[k] += dt_half*sim.torque[i][j][k];
 			}
 		}
 	}
@@ -208,12 +208,12 @@ void _rotate_mol(System::simulation& sim)
 		#pragma omp parallel for
 		for (int j = 0; j < sim.n_molecules[i]; ++j)
 		{
-			for (int l = 0; l < sim.n_atoms[i]; ++l)
+			for (int l = 0; l < sim.molconst[i].n_atoms; ++l)
 			{
-				matrix_mult_vec(sim.rotation_matrix[i][j],sim.position_par_com_init[i][j][l],sim.position_par_com[i][j][l]);
+				matrix_mult_vec(sim.mol_state[i][j].rotation_matrix,sim.mol_state[i][j].position_par_com_init[l],sim.mol_state[i][j].position_par_com[l]);
 				for (int k = 0; k < 3; ++k)
 				{
-					sim.position_par_world[i][j][l][k] = sim.position_com[i][j][k] + sim.position_par_com[i][j][l][k];
+					sim.mol_state[i][j].position_par_world[l][k] = sim.mol_state[i][j].position_com[k] + sim.mol_state[i][j].position_par_com[l][k];
 				}
 			}
 		}
@@ -275,24 +275,24 @@ void integrate_verdet_box(System::simulation& sim)
 			#pragma omp parallel for
 			for (int k = 0; k < sim.n_dimensions; ++k)
 			{
-				sim.position_com[i][j][k] += dt*sim.velocity_com[i][j][k] + 0.5*dt*dt*sim.acceleration_com[i][j][k];
-				sim.velocity_com[i][j][k] += dt*sim.acceleration_com[i][j][k];
-				if(sim.position_com[i][j][k]<0 || sim.position_com[i][j][k] > sim.box_size_limits[k]){
-					int num_bounce = (int)(sim.position_com[i][j][k]/sim.box_size_limits[k]);
-					double l = std::abs(sim.position_com[i][j][k] - sim.box_size_limits[k]*num_bounce);
+				sim.mol_state[i][j].position_com[k] += dt*sim.mol_state[i][j].velocity_com[k] + 0.5*dt*dt*sim.mol_state[i][j].acceleration_com[k];
+				sim.mol_state[i][j].velocity_com[k] += dt*sim.mol_state[i][j].acceleration_com[k];
+				if(sim.mol_state[i][j].position_com[k]<0 || sim.mol_state[i][j].position_com[k] > sim.box_size_limits[k]){
+					int num_bounce = (int)(sim.mol_state[i][j].position_com[k]/sim.box_size_limits[k]);
+					double l = std::abs(sim.mol_state[i][j].position_com[k] - sim.box_size_limits[k]*num_bounce);
 					//Getting rid of the signs
 					num_bounce *= ((num_bounce < 0)*-1 + (num_bounce>0));
 					//Done
 					//Implementing reflection
-					sim.position_com[i][j][k] = (num_bounce%2 == 0)*l + (num_bounce%2 == 1)*(sim.box_size_limits[k]-l);
-					sim.velocity_com[i][j][k] *= ((num_bounce%2==0) + (num_bounce%2 == 1)*(-1));
+					sim.mol_state[i][j].position_com[k] = (num_bounce%2 == 0)*l + (num_bounce%2 == 1)*(sim.box_size_limits[k]-l);
+					sim.mol_state[i][j].velocity_com[k] *= ((num_bounce%2==0) + (num_bounce%2 == 1)*(-1));
 					//Done
 				}
 				#pragma omp atomic
-				sim.energy_kinetic[i] += sim.velocity_com[i][j][k]*sim.velocity_com[i][j][k];
+				sim.energy_kinetic[i] += sim.mol_state[i][j].velocity_com[k]*sim.mol_state[i][j].velocity_com[k];
 			}
 		}
-		sim.energy_kinetic[i] *= sim.mass[i];
+		sim.energy_kinetic[i] *= sim.molconst[i].mass;
 		sim.temperature[i] = sim.energy_kinetic[i]/(sim.n_dimensions*sim.n_molecules[i]*BOLTZ_SI);
 		sim.energy_total += sim.energy_kinetic[i];
 	}

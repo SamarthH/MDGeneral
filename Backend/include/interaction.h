@@ -50,7 +50,7 @@ void interact(System::simulation& sim);
  * @param k Atom n1 of type1
  * @param l Atom n2 of type2
  ******************************************************************************/
-void free_particles(System::simulation& sim,int type1,int type2, int k, int l);
+void free_particles(System::simulation& sim,int type1,int type2, int k, int l, std::vector<double> constant);
 
 /*******************************************************************************
  * \brief Setup the Lennard-Jones potential for periodic boundary conditions between two particle types
@@ -60,14 +60,6 @@ void free_particles(System::simulation& sim,int type1,int type2, int k, int l);
  * \n
  * Potential : \f[ U(r) = 4\epsilon*[(\frac{\sigma}{r})^12 - (\frac{\sigma}{r})^6] - U(r_cut) \f] \n
  * Force : \f[ F(r) = 24\epsilon*\frac{\sigma^6}{r^7}*[2(\frac{\sigma}{r})^6 - 1] \vu{r} \f] \n
- * Here, the constants vector is as follows: \n
- * interaction_const[i][j][0] = \f$ \epsilon \f$ \n
- * interaction_const[i][j][1] = \f$ \sigma \f$ \n
- * interaction_const[i][j][2] = Cutoff radius/distance (r_cut) \n
- * interaction_const[i][j][3] = Truncated Potential (etrunc) \n
- * interaction_const[i][j][4] = \f$ \sigma^6 \f$ \n
- * interaction_const[i][j][5] = Tail Energy (assuming constant distribution outside cutoff radius) \n
- * \n
  *
  * @param sim Simulation being used
  * @param type1 First type of particle interacting
@@ -75,7 +67,7 @@ void free_particles(System::simulation& sim,int type1,int type2, int k, int l);
  * @param k Atom n1 of type1
  * @param l Atom n2 of type2
  ******************************************************************************/
-void lj_periodic(System::simulation& sim,int type1,int type2, int k, int l); 
+void lj_periodic(System::simulation& sim,int type1,int type2, int k, int l, std::vector<double> constant); 
 
 /*******************************************************************************
  * \brief Setup the Lennard-Jones potential for rigid box boundary conditions between two particle types
@@ -99,6 +91,6 @@ void lj_periodic(System::simulation& sim,int type1,int type2, int k, int l);
  * @param k Atom n1 of type1
  * @param l Atom n2 of type2
  ******************************************************************************/
-void lj_box(System::simulation& sim,int type1,int type2, int k, int l);
+void lj_box(System::simulation& sim,int type1,int type2, int k, int l, std::vector<double> constant);
 
 #endif
