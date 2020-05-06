@@ -111,12 +111,27 @@ namespace System{
 		/// This returns the potential energy of interaction excluding the tail energy contribution.
 		void (*f_interaction)(System::simulation&, int,int,int,int, std::vector<double>);
 
-		void doInteraction(System::simulation& sim, int type1, int type2, int n1, int n2)
-		{
-			f_interaction(sim,type1,type2,n1,n2,constant);
-		}
+		void doInteraction(System::simulation& sim, int type1, int type2, int n1, int n2);
+
+		void initialize_constant_array(System::simulation& sim, int i, int j);
 
 		interaction_method();
+	};
+
+	class interaction_list
+	{
+	public:
+
+		int n_interactions;
+		std::vector<interaction_method> interactions;
+
+		interaction_list();
+		~interaction_list();
+		
+		void getNumberOfInteractions();
+		void doInteractions(System::simulation& sim, int type1, int type2, int n1, int n2);
+		void initializeConstantArrays(System::simulation& sim, int i, int j);
+
 	};
 
 	class thermostat_method
@@ -157,13 +172,15 @@ namespace System{
 
 		std::vector<thermostat_method> thermostat; /**< This stores thermostats for different particle sets */
 		
-		std::vector<std::vector<std::vector<std::vector<interaction_method>>>> interaction; /**< This defines the set of functions for interaction between different particle types. Also allows for non-symmetric interaction.*/
+		std::vector<std::vector<std::vector<std::vector<interaction_list>>>> interaction; /**< This defines the set of functions for interaction between different particle types. Also allows for non-symmetric interaction.*/
 		
 		std::array<double,3> box_size_limits; /**< We assume that the initial limits are all (0,0,0,...,0) to whatever the limits define for a box (allocate to n_dimensions size) */
 		
 		int total_steps; ///< Total number of steps to be taken
 		
 		std::vector<int> dof; ///< This stores the number of degrees of freedom for each molecule/particle type.
+
+		double vol; ///< Volume of the box
 
 		simulation(std::string input):input_params(input), system_state(n_types,n_molecules,n_atoms)
 		{

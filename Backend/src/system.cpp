@@ -1,4 +1,7 @@
 #include "system.h"
+#include "interaction.h"
+#include "thermostat.h"
+#include "universal_functions.h"
 
 System::system_state::system_state(int n_types, std::vector<int>& n_molecules, std::vector<int>& n_atoms)
 {
@@ -62,22 +65,9 @@ System::input_params::input_params(std::string input)
 	}
 	periodic_boundary = (int)input_vector[3*n_types+5];
 }
-/*
-System::constants_interaction::constants_interaction()
-{
-	try{
-		constant.reserve(8);
-	}
-	catch(const std::length_error& le){
-		std::cerr<<"Error 0001"<<std::endl; 
-		exit(0001);
-	}
-	catch(const std::bad_alloc& ba){
-		std::cerr<<"Error 0002"<<std::endl;
-		exit(0002);
-	}
-}
 
+
+/*
 System::constants_thermostat::constants_thermostat(int n_types)
 {
 	try{
@@ -162,5 +152,90 @@ void System::molecule_state::reservespace(int n_atoms)
 	catch(const std::bad_alloc& ba){
 		std::cerr<<"Error 0002"<<std::endl;
 		exit(0002);
+	}
+}
+
+System::interaction_list::interaction_list()
+{
+	try
+	{
+		interactions.reserve(4);
+	}
+	catch(const std::length_error& le){
+		std::cerr<<"Error 0001"<<std::endl; 
+		exit(0001);
+	}
+	catch(const std::bad_alloc& ba){
+		std::cerr<<"Error 0002"<<std::endl;
+		exit(0002);
+	}
+}
+
+void System::interaction_list::doInteractions(System::simulation& sim, int type1, int type2, int n1, int n2)
+{
+	for (int i = 0; i < n_interactions; ++i)
+	{
+		interactions[i].doInteraction(sim,type1,type2,n1,n2);
+	}
+}
+
+void System::interaction_list::getNumberOfInteractions()
+{
+	n_interactions = interactions.size();
+}
+
+void System::interaction_list::initializeConstantArrays(System::simulation& sim, int i, int j)
+{
+	for (int k = 0; k < n_interactions; ++k)
+	{
+		interactions[k].initialize_constant_array(sim,i,j);
+	}
+}
+
+System::interaction_method::interaction_method()
+{
+	try{
+		constant.reserve(8);
+	}
+	catch(const std::length_error& le){
+		std::cerr<<"Error 0001"<<std::endl; 
+		exit(0001);
+	}
+	catch(const std::bad_alloc& ba){
+		std::cerr<<"Error 0002"<<std::endl;
+		exit(0002);
+	}
+}
+
+void System::interaction_method::doInteraction(System::simulation& sim, int type1, int type2, int n1, int n2)
+{
+	f_interaction(sim,type1,type2,n1,n2,constant);
+}
+
+void System::interaction_method::initialize_constant_array(System::simulation& sim, int i, int j)
+{
+	int dim = sim.n_dimensions;
+
+	if(f_interaction == lj_periodic || f_interaction == lj_box)
+	{
+		/*
+		constant[0] = \epsilon
+		constant[1] = \sigma
+		constant[2] = Cutoff radius/distance (r_cut)
+		constant[3] = Truncated Potential (etrunc)
+		constant[4] = \sigma^6
+		constant[5] = Tail Energy (assuming constant distribution outside cutoff radius)
+		*/
+		constant[4] = std::pow(constant[1],6);
+		double temp = constant[4]/std::pow(constant[2],6); //temp = (sigma/r_cut)^6
+		constant[3] = 4*constant[0]*temp*(temp-1);
+		constant[5] = 2*constant[0]*(sim.n_molecules[i]*sim.n_molecules[j]/sim.vol)*surface_unit_sphere(dim);
+		constant[5] *= (constant[4]*constant[4]*std::pow(constant[2],dim-12)/(dim-12) - constant[4]*std::pow(constant[2],dim-6)/(dim-6));
+
+	}
+	else
+	{
+		std::cerr<<"Error 0003"<<std::endl;
+		exit(0003);
 	}
 }

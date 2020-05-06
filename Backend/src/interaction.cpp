@@ -97,34 +97,13 @@ void initialize_interactions(System::simulation& sim)
 	}
 	for (int i = 0; i < sim.n_types; ++i)
 	{
-		for (int j = 0; j < sim.n_types; ++j)
+		for (int j = 0; j <= i; ++j)
 		{
 			for (int k = 0; k < sim.n_atoms[i]; ++k)
 			{
 				for (int l = 0; l < sim.n_atoms[j]; ++l)
 				{
-					if(sim.interaction[i][j][k][l].f_interaction == lj_periodic || sim.interaction[i][j][k][l].f_interaction == lj_box)
-					{
-						/*
-						interaction_const[i][j][0] = \epsilon
-						interaction_const[i][j][1] = \sigma
-						interaction_const[i][j][2] = Cutoff radius/distance (r_cut)
-						interaction_const[i][j][3] = Truncated Potential (etrunc)
-						interaction_const[i][j][4] = \sigma^6
-						interaction_const[i][j][5] = Tail Energy (assuming constant distribution outside cutoff radius)
-						*/
-						sim.interaction[i][j][k][l].constant[4] = std::pow(sim.interaction[i][j][k][l].constant[1],6);
-						double temp = sim.interaction[i][j][k][l].constant[4]/std::pow(sim.interaction[i][j][k][l].constant[2],6); //temp = (sigma/r_cut)^6
-						sim.interaction[i][j][k][l].constant[3] = 4*sim.interaction[i][j][k][l].constant[0]*temp*(temp-1);
-						sim.interaction[i][j][k][l].constant[5] = 2*sim.interaction[i][j][k][l].constant[0]*(sim.n_molecules[i]*sim.n_molecules[j]/vol)*surface_unit_sphere(dim);
-						sim.interaction[i][j][k][l].constant[5] *= (sim.interaction[i][j][k][l].constant[4]*sim.interaction[i][j][k][l].constant[4]*std::pow(sim.interaction[i][j][k][l].constant[2],dim-12)/(dim-12) - sim.interaction[i][j][k][l].constant[4]*std::pow(sim.interaction[i][j][k][l].constant[2],dim-6)/(dim-6));
-
-					}
-					else
-					{
-						std::cerr<<"Error 0003"<<std::endl;
-						exit(0003);
-					}
+					sim.interaction[i][j][k][l].initializeConstantArrays(sim,i,j);
 				}
 			}
 		}
@@ -160,7 +139,7 @@ void interact(System::simulation& sim){
 				#pragma omp parallel for
 				for (int l = 0; l < sim.n_atoms[j]; ++l)
 				{
-					sim.interaction[i][j][k][l].doInteraction(sim,i,j,k,l);
+					sim.interaction[i][j][k][l].doInteractions(sim,i,j,k,l);
 				}
 			}
 		}		
