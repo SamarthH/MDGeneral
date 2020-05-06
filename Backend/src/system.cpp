@@ -1,6 +1,6 @@
 #include "system.h"
 
-System::system_state::system_state(int n_types, int n_dimensions, std::vector<int>& n_molecules)
+System::system_state::system_state(int n_types, std::vector<int>& n_molecules, std::vector<int>& n_atoms)
 {
 	//Allocating (reserving) system_state variables
 	try{
@@ -62,7 +62,7 @@ System::input_params::input_params(std::string input)
 	}
 	periodic_boundary = (int)input_vector[3*n_types+5];
 }
-
+/*
 System::constants_interaction::constants_interaction()
 {
 	try{
@@ -96,7 +96,8 @@ System::constants_thermostat::constants_thermostat(int n_types)
 		exit(0002);
 	}
 }
-
+*/
+/*
 System::correlation::correlation(int n_types, int n_dimensions, std::vector<int>& n_molecules, double runtime, double timestep)
 {
 	// Reserving for initial arrays
@@ -143,14 +144,16 @@ System::correlation::correlation(int n_types, int n_dimensions, std::vector<int>
 	}
 	//Done
 }
+*/
 
-System::molecule_const::molecule_const(int n_types)
+void System::molecule_state::reservespace(int n_atoms)
 {
-	try{
-		n_atoms.reserve(n_types);
-		pos_init_mol.reserve(n_types);
-		inertia_tensor.reserve(n_types);
-		inv_inertia_tensor.reserve(n_types);
+	try
+	{
+		position_par_world.reserve(n_atoms);
+		position_par_com.reserve(n_atoms);
+		position_par_com_init.reserve(n_atoms);
+		force_par.reserve(n_atoms);
 	}
 	catch(const std::length_error& le){
 		std::cerr<<"Error 0001"<<std::endl; 

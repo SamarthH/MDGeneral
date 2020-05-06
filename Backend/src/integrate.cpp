@@ -86,12 +86,12 @@ void _verlet_rot1(System::simulation& sim)
 			std::array<std::array<double,3>,3> Rt;
 			transpose_mat(sim.mol_state[i][j].rotation_matrix,Rt);
 			matrix_mult_vec(Rt,sim.mol_state[i][j].angmomentum,L_m);
-			matrix_mult_vec(Rt,sim.torque[i][j],T_m);
+			matrix_mult_vec(Rt,sim.mol_state[i][j].torque,T_m);
 
 			std::array<double,3> omega;
 			for (int k = 0; k < 3; ++k)
 			{
-				omega[k] = sim.inv_inertia_tensor[i][k]*L_m[k];
+				omega[k] = sim.molconst[i].inv_inertia_tensor[k]*L_m[k];
 			}
 
 			std::array<double,3> L_m_dot;
@@ -115,7 +115,7 @@ void _verlet_rot1(System::simulation& sim)
 			//Updating omega
 			for (int k = 0; k < 3; ++k)
 			{
-				omega[k] = sim.inv_inertia_tensor[i][k]*L_m[k];
+				omega[k] = sim.molconst[i].inv_inertia_tensor[k]*L_m[k];
 			}
 
 			quaternion qdot;
@@ -136,7 +136,7 @@ void _verlet_rot1(System::simulation& sim)
 
 			for (int k = 0; k < 3; ++k)
 			{
-				sim.mol_state[i][j].angmomentum[k] += dt_half*sim.torque[i][j][k];
+				sim.mol_state[i][j].angmomentum[k] += dt_half*sim.mol_state[i][j].torque[k];
 			}
 
 			quaternion diffq;
@@ -154,7 +154,7 @@ void _verlet_rot1(System::simulation& sim)
 
 				for (int k = 0; k < 3; ++k)
 				{
-					omega[k] = sim.inv_inertia_tensor[i][k]*L_m[k];
+					omega[k] = sim.molconst[i].inv_inertia_tensor[k]*L_m[k];
 				}
 
 				qua_vec_mult(q_half_new,omega,qdot);
@@ -175,9 +175,9 @@ void _verlet_rot1(System::simulation& sim)
 
 			for (int k = 0; k < 4; ++k)
 			{
-				sim.quatrot[i][j][k] += dt*qdot[k];
+				sim.mol_state[i][j].quatrot[k] += dt*qdot[k];
 			}
-			qua_normalize(sim.quatrot[i][j]);
+			qua_normalize(sim.mol_state[i][j].quatrot);
 		}
 	}
 }
@@ -194,7 +194,7 @@ void _verlet_rot2(System::simulation& sim)
 			#pragma omp parallel for
 			for (int k = 0; k < 3; ++k)
 			{
-				sim.mol_state[i][j].angmomentum[k] += dt_half*sim.torque[i][j][k];
+				sim.mol_state[i][j].angmomentum[k] += dt_half*sim.mol_state[i][j].torque[k];
 			}
 		}
 	}

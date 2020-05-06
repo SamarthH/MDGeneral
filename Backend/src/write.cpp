@@ -10,15 +10,15 @@ void write_traj(System::simulation& sim)
             std::cout<<sim.state<<","<<i<<","<<j<<",";
             for(int k = 0; k < sim.n_dimensions;++k)
             {
-               std::cout<<sim.position_com[i][j][k]<<",";
+               std::cout<<sim.mol_state[i][j].position_com[k]<<",";
             }
             for(int k = 0; k < sim.n_dimensions;++k)
             {
-               std::cout<<sim.velocity_com[i][j][k]<<",";
+               std::cout<<sim.mol_state[i][j].velocity_com[k]<<",";
             }
             for(int k = 0; k < sim.n_dimensions;++k)
             {
-               std::cout<<sim.acceleration_com[i][j][k]<<",";
+               std::cout<<sim.mol_state[i][j].acceleration_com[k]<<",";
             }
             std::cout<<std::endl;
         }   

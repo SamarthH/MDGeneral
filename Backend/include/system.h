@@ -14,6 +14,8 @@
 
 namespace System{
 
+	class simulation;
+
 	class molecule_state
 	{
 	public:
@@ -34,10 +36,10 @@ namespace System{
 		std::array<std::array<double,3>,3> rotation_matrix; ///< Rotation matrix corresponding to quatrot
 
 		molecule_state() {} // Do nothing
-		~molecule_state();
+		~molecule_state() {}
 
 		/// Reserves space for the vectors
-		reservespace(int n_atoms);
+		void reservespace(int n_atoms);
 		
 	};
 
@@ -78,6 +80,7 @@ namespace System{
 		int n_types; ///< This represents the number of types of particles
 		int n_dimensions; ///< This represents the number of dimensions of the simulation (by default must be 3)
 		std::vector<int> n_molecules; ///< This represents the number of particles of each type (n_types sized)
+		std::vector<int> n_atoms;
 		double timestep; ///< This defines the size of each timestep (dt)
 		double runtime; ///< This defines the time for which to run the simulation
 		int parallelize; ///< If 1, parallelize. Else, do not parallelize.
@@ -122,7 +125,7 @@ namespace System{
 		std::vector<double> constant; ///< This vector stores constants of the thermostats
 
 		/// This thermostat function is called as f_thermostat(System::simulation& sim, int type, std::vector<double> constant)
-		void (*f_thermostat)(System::simulation&, int , std::vector<double>)
+		void (*f_thermostat)(System::simulation&, int , std::vector<double>);
 
 		void doThermostat(System::simulation& sim, int type)
 		{
@@ -169,7 +172,7 @@ namespace System{
 
 			//Allocating functions
 			try{
-				molconst.reserve(n_atoms);
+				molconst.reserve(n_types);
 
 				dof.reserve(n_types);
 				thermostat.reserve(n_types);

@@ -32,7 +32,7 @@ void call_thermostat(System::simulation& sim){
 	}
 }
 
-void no_thermostat(System::simulation& sim, int type){
+void no_thermostat(System::simulation& sim, int type, std::vector<double> constant){
 	//Nothing to be done here
 }
 
@@ -56,8 +56,8 @@ void anderson(System::simulation& sim, int type, std::vector<double> constant){
 
 			R.split(size,rank);
 
-			if(unif(R) <= sim.thermostat_const[j][0]*(sim.timestep)){
-				sim.velocity_com[type][j][k] = norm(R);
+			if(unif(R) <= constant[0]*(sim.timestep)){
+				sim.mol_state[type][j].velocity_com[k] = norm(R);
 			}
 		}
 	}
@@ -96,7 +96,7 @@ void bussi(System::simulation& sim,int type, std::vector<double> constant){
 	{
 		for (int k = 0; k < sim.n_dimensions; ++k)
 		{
-			sim.velocity_com[type][j][k] *= alpha;
+			sim.mol_state[type][j].velocity_com[k] *= alpha;
 		}
 	}
 }

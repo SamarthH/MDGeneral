@@ -62,13 +62,13 @@ void _get_torque(System::simulation& sim)
 			#pragma omp parallel for
 			for (int k = 0; k < sim.n_atoms[i]; ++k)
 			{
-				quaternion t;
-				qua_vcross(sim.position_par_com[i][j][k],sim.force_par[i][j][k],t);
+				std::array<double,3> t;
+				qua_vcross(sim.mol_state[i][j].position_par_com[k],sim.mol_state[i][j].force_par[k],t);
 				#pragma omp parallel for
-				for (int l = 1; l < 4; ++l)
+				for (int l = 0; l < 3; ++l)
 				{
 					#pragma omp atomic
-					sim.torque[i][j][l] += t[l];
+					sim.mol_state[i][j].torque[l] += t[l];
 				}				
 			}
 		}
@@ -103,7 +103,7 @@ void initialize_interactions(System::simulation& sim)
 			{
 				for (int l = 0; l < sim.n_atoms[j]; ++l)
 				{
-					if(sim.interaction[i][j][k][l] == lj_periodic || sim.interaction[i][j][k][l] == lj_box)
+					if(sim.interaction[i][j][k][l].f_interaction == lj_periodic || sim.interaction[i][j][k][l].f_interaction == lj_box)
 					{
 						/*
 						interaction_const[i][j][0] = \epsilon
@@ -113,11 +113,11 @@ void initialize_interactions(System::simulation& sim)
 						interaction_const[i][j][4] = \sigma^6
 						interaction_const[i][j][5] = Tail Energy (assuming constant distribution outside cutoff radius)
 						*/
-						sim.interaction_const[i][j][k][l][4] = std::pow(sim.interaction_const[i][j][k][l][1],6);
-						double temp = sim.interaction_const[i][j][k][l][4]/std::pow(sim.interaction_const[i][j][k][l][2],6); //temp = (sigma/r_cut)^6
-						sim.interaction_const[i][j][k][l][3] = 4*sim.interaction_const[i][j][k][l][0]*temp*(temp-1);
-						sim.interaction_const[i][j][k][l][5] = 2*sim.interaction_const[i][j][k][l][0]*(sim.n_molecules[i]*sim.n_molecules[j]/vol)*surface_unit_sphere(dim);
-						sim.interaction_const[i][j][k][l][5] *= (sim.interaction_const[i][j][k][l][4]*sim.interaction_const[i][j][k][l][4]*std::pow(sim.interaction_const[i][j][k][l][2],dim-12)/(dim-12) - sim.interaction_const[i][j][k][l][4]*std::pow(sim.interaction_const[i][j][k][l][2],dim-6)/(dim-6));
+						sim.interaction[i][j][k][l].constant[4] = std::pow(sim.interaction[i][j][k][l].constant[1],6);
+						double temp = sim.interaction[i][j][k][l].constant[4]/std::pow(sim.interaction[i][j][k][l].constant[2],6); //temp = (sigma/r_cut)^6
+						sim.interaction[i][j][k][l].constant[3] = 4*sim.interaction[i][j][k][l].constant[0]*temp*(temp-1);
+						sim.interaction[i][j][k][l].constant[5] = 2*sim.interaction[i][j][k][l].constant[0]*(sim.n_molecules[i]*sim.n_molecules[j]/vol)*surface_unit_sphere(dim);
+						sim.interaction[i][j][k][l].constant[5] *= (sim.interaction[i][j][k][l].constant[4]*sim.interaction[i][j][k][l].constant[4]*std::pow(sim.interaction[i][j][k][l].constant[2],dim-12)/(dim-12) - sim.interaction[i][j][k][l].constant[4]*std::pow(sim.interaction[i][j][k][l].constant[2],dim-6)/(dim-6));
 
 					}
 					else
@@ -251,7 +251,7 @@ void lj_box(System::simulation& sim, int type1, int type2, int k, int l, std::ve
 			double r2 = 0;
 			for (int m = 0; m < sim.n_dimensions; ++m)
 			{
-				r2 += std::pow(sim.position_par_world[type1][i][k][m] - sim.position_par_world[type2][j][l][m],2);
+				r2 += std::pow(sim.mol_state[type1][i].position_par_world[k][m] - sim.mol_state[type2][j].position_par_world[l][m],2);
 			}
 			if(std::sqrt(r2) < constant[2])
 			{

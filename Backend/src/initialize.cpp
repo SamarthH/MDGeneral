@@ -31,10 +31,10 @@ void init_sim(System::simulation& sim)
 
                 trng::uniform01_dist<> unif;
 
-                sim.position_com[i][j][k] = unif(R)*sim.box_size_limits[k];
-                sim.velocity_com[i][j][k] = (unif(R) - 0.5);
-                velsum[i][k]+=sim.velocity_com[i][j][k];
-                vel2sum[i]+=pow(sim.velocity_com[i][j][k],2);
+                sim.mol_state[i][j].position_com[k] = unif(R)*sim.box_size_limits[k];
+                sim.mol_state[i][j].velocity_com[k] = (unif(R) - 0.5);
+                velsum[i][k]+=sim.mol_state[i][j].velocity_com[k];
+                vel2sum[i]+=pow(sim.mol_state[i][j].velocity_com[k],2);
             }
         }
         #pragma omp parallel for
@@ -49,7 +49,7 @@ void init_sim(System::simulation& sim)
         {
             for(int k = 0; k < sim.n_dimensions;++k)
             {
-                sim.velocity_com[i][j][k]=(sim.velocity_com[i][j][k]-velsum[i][k])*scale[i];
+                sim.mol_state[i][j].velocity_com[k]=(sim.mol_state[i][j].velocity_com[k]-velsum[i][k])*scale[i];
             }
         }
 

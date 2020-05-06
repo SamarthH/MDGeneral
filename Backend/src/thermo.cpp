@@ -14,7 +14,7 @@ void trans_ke(System::simulation& sim)
             #pragma omp parallel for
             for(int k = 0; k < sim.n_dimensions;++k)
             {
-                vel2sum[i]+=pow(sim.velocity_com[i][j][k],2);
+                vel2sum[i]+=pow(sim.mol_state[i][j].velocity_com[k],2);
             }
         }
         vel2sum[i] *= 0.5*sim.mass[i];    
