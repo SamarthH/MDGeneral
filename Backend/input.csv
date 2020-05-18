@@ -1,1 +1,37 @@
-
+#No. of dimensions (Should be an int <=3 and >0)
+.
+#No. of types of molecules (int>0);
+.
+#Runtime (double>0);
+.
+#Timestep (Runtime >= double > 0);
+.
+#Parallelize (int)[If 1, parallelize, else, dont];
+.
+#Periodic_Boundary (int) [If 1, periodic boundary, else, box];
+.
+#Mass of molecule (double >0);
+.
+#No. of molecules (int>0);
+.
+#No. of atoms in the molecule (int > 0);
+.
+#Position of each atom w.r.t. COM (a double[3] for each atom (if n_dimensions < 3, leave the inaccessible positions to 0));
+.
+#Intertia tensor in the present configuration (double[3][3]);
+.
+#Thermostat to be used (No thermostat[0], Anderson[1] or Bussi[2]) (Output the number in square brackets)
+.
+#Temperature to be achieved by thermostat
+.
+#Thermostat constants (For Anderson(\nu), for Bussi(\tau))
+.
+#box_size_limits (double[n_dimensions] > 0);
+.
+#for(i from 0 to n_types):for(j from 0 to i):for(k from 0 to n_atoms[i]):for(l from 0 to n_atoms[j]):Interaction function (No interaction[0], Lennard-Jones[1]) (Output number in square brackets);Interaction constants( Lennard-Jones (\epsilon,\sigma,r_cutoff))
+.
+.
+.
+.
+.
+.
